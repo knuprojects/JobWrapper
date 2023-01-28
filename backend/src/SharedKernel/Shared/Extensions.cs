@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Shared;
+﻿namespace Shared;
 
 public static class Extensions
 {

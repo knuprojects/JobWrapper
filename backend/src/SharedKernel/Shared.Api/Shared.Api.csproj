@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\Shared.Abstractions\Shared.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

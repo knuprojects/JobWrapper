@@ -6,6 +6,8 @@ using Shared.Dal.Initializers;
 using Shared.Dal.Repositories;
 using Shared.Dal.Setup;
 using Shared.Dal.Utils;
+using Shared.Dal.Utils.Services;
+using StackExchange.Redis;
 
 namespace Shared.Dal;
 
@@ -21,7 +23,7 @@ public static class Extensions
 
             if (databaseOptions is not null)
             {
-                dbContextOptionsBuilder.UseSqlServer(databaseOptions.DefaultConnection, sqlServerAction =>
+                dbContextOptionsBuilder.UseSqlServer(databaseOptions.MssqlConnection, sqlServerAction =>
                 {
                     sqlServerAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
 
@@ -51,7 +53,7 @@ public static class Extensions
             var databaseOptions = serviceProvider.GetService<IOptions<PostgresOptions>>()!.Value;
 
             if (databaseOptions is not null)
-                dbContextOptionsBuilder.UseNpgsql(databaseOptions.DefaultConnection);
+                dbContextOptionsBuilder.UseNpgsql(databaseOptions.PostgresConnection);
         });
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -61,8 +63,6 @@ public static class Extensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork<TContext>>();
 
-        //services.AddScoped(typeof(IEntityRepository<>), typeof(EntityRepository<>));
-
         return services;
     }
 
@@ -71,7 +71,14 @@ public static class Extensions
     {
         services.ConfigureOptions<RedisOptions>();
 
-        //services.AddScoped<ICacheService, CacheService>();
+        services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
+        {
+            var redisOptions = serviceProvider.GetService<IOptions<RedisOptions>>()!.Value;
+
+            return ConnectionMultiplexer.Connect(redisOptions.RedisConnection);
+        });
+
+        services.AddScoped<ICacheService, CacheService>();
 
         return services;
     }
@@ -82,7 +89,7 @@ public static class Extensions
 
         services.AddSingleton<IMongoDatabase>(options => {
             var settings = options.GetService<IOptions<MongoOptions>>()!.Value;
-            var client = new MongoClient(settings.DefaultConnection);
+            var client = new MongoClient(settings.MongoConnection);
             return client.GetDatabase(settings.DatabaseName);
         });
 

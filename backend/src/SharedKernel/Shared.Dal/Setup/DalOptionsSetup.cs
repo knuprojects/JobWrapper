@@ -5,10 +5,10 @@ namespace Shared.Dal.Setup;
 
 public static class BaseOptionsSetup
 {
-    public static string ConfigurationSectionMssqlName => "mssql-database";
-    public static string ConfigurationSectionPostgresName => "postgres-database";
-    public static string ConfigurationSectionRedisName => "redis-database";
-    public static string ConfigurationSectionMongoName => "mongo-database";
+    public static string ConfigurationSectionMssqlName => "mssqlDatabase";
+    public static string ConfigurationSectionPostgresName => "postgresDatabase";
+    public static string ConfigurationSectionRedisName => "redisDatabase";
+    public static string ConfigurationSectionMongoName => "mongoDatabase";
 }
 
 internal sealed class DalOptionsMssqlSetup : IConfigureOptions<MssqlOptions>
@@ -24,10 +24,10 @@ internal sealed class DalOptionsMssqlSetup : IConfigureOptions<MssqlOptions>
     {
         if (options is not null)
         {
-            var connectionString = _configuration.GetConnectionString("mssql-connection");
+            var connectionString = _configuration.GetConnectionString("mssqlConnection");
 
             if (!string.IsNullOrWhiteSpace(connectionString))
-                options.DefaultConnection = connectionString;
+                options.MssqlConnection = connectionString;
 
             _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionMssqlName).Bind(options);
         }
@@ -47,10 +47,10 @@ internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOption
     {
         if (options is not null)
         {
-            var connectionString = _configuration.GetConnectionString("postgres-connection");
+            var connectionString = _configuration.GetConnectionString("postgresConnection");
 
             if (!string.IsNullOrWhiteSpace(connectionString))
-                options.DefaultConnection = connectionString;
+                options.PostgresConnection = connectionString;
 
             _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionPostgresName).Bind(options);
         }
@@ -70,10 +70,10 @@ internal sealed class DalRedisOptionsSetup : IConfigureOptions<RedisOptions>
     {
         if (options is not null)
         {
-            var connectionString = _configuration.GetConnectionString("redis-connection");
+            var connectionString = _configuration.GetConnectionString("redisConnection");
 
             if (!string.IsNullOrWhiteSpace(connectionString))
-                options.DefaultConnection = connectionString;
+                options.RedisConnection = connectionString;
 
             _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionRedisName).Bind(options);
         }
@@ -93,10 +93,10 @@ internal sealed class DalMongoOptionsSetup : IConfigureOptions<MongoOptions>
     {
         if (options is not null)
         {
-            var connectionString = _configuration.GetConnectionString("mongo-connection");
+            var connectionString = _configuration.GetConnectionString("mongoConnection");
 
             if (!string.IsNullOrWhiteSpace(connectionString))
-                options.DefaultConnection = connectionString;
+                options.MongoConnection = connectionString;
 
             _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionMongoName).Bind(options);
         }

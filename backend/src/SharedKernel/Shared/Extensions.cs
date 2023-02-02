@@ -6,7 +6,6 @@ using Shared.Api.Environments;
 using Shared.Api.Exceptions;
 using Shared.Contexts;
 using Shared.Http;
-using Shared.Messaging;
 using Shared.Observability.Logging;
 using Shared.Security;
 using System.Reflection;
@@ -32,7 +31,6 @@ public static class Extensions
             .AddHttpContextAccessor()
             .AddJwt(builder.Configuration)
             .AddCorsPolicy(builder.Configuration)
-            .AddMessaging(builder.Configuration)
             .AddAbstractions()
             .AddLogger(builder.Configuration);
 

@@ -2,7 +2,7 @@
 
 public sealed class MssqlOptions
 {
-    public string DefaultConnection { get; set; } = string.Empty;
+    public string MssqlConnection { get; set; } = string.Empty;
 
     public int MaxRetryCount { get; set; }
     public int CommandTimeout { get; set; }
@@ -12,17 +12,17 @@ public sealed class MssqlOptions
 
 public sealed class PostgresOptions
 {
-    public string DefaultConnection { get; set; } = string.Empty;
+    public string PostgresConnection { get; set; } = string.Empty;
 }
 
 public sealed class RedisOptions
 {
-    public string DefaultConnection { get; set; } = string.Empty;
+    public string RedisConnection { get; set; } = string.Empty;
 }
 
 public sealed class MongoOptions
 {
-    public string DefaultConnection { get; set; } = string.Empty;
+    public string MongoConnection { get; set; } = string.Empty;
 
     public string DatabaseName { get; set; } = string.Empty;
 }

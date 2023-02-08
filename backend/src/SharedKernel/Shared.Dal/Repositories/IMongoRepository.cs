@@ -57,7 +57,7 @@ public class MongoRepository<TDocument> : IMongoRepository<TDocument>
 
     public MongoRepository(MongoOptions settings)
     {
-        var database = new MongoClient(settings.DefaultConnection).GetDatabase(settings.DatabaseName);
+        var database = new MongoClient(settings.MongoConnection).GetDatabase(settings.DatabaseName);
         _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
     }
 

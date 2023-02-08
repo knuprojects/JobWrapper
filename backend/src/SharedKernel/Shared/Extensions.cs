@@ -14,7 +14,7 @@ namespace Shared;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddMicroFramework(this WebApplicationBuilder builder, Assembly assemblies)
+    public static WebApplicationBuilder AddShared(this WebApplicationBuilder builder, Assembly assemblies)
     {
         var appOptions = builder.Configuration.GetSection("app").BindOptions<AppOptions>();
         var appInfo = new AppInfo(appOptions.Name, appOptions.Version);
@@ -26,7 +26,6 @@ public static class Extensions
             .AddLogging()
             .Services
             .AddErrorHandling()
-            .AddDispatchers(assemblies)
             .AddContexts()
             .AddHttpContextAccessor()
             .AddJwt(builder.Configuration)

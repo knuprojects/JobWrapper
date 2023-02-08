@@ -1,0 +1,62 @@
+{
+  "reverseProxy": {
+    "routes": {
+      "users": {
+        "clusterId": "users",
+        "match": {
+          "path": "users-service/{**catchall}"
+        },
+        "transforms": [
+          {
+            "pathPattern": "{**catchall}"
+          }
+        ]
+      },
+      "statistics": {
+        "clusterId": "vacancies",
+        "match": {
+          "path": "vacancies-service/{**catchall}"
+        },
+        "transforms": [
+          {
+            "pathPattern": "{**catchall}"
+          }
+        ]
+      },
+      "notifications": {
+        "clusterId": "notifications",
+        "match": {
+          "path": "notifications-service/{**catchall}"
+        },
+        "transforms": [
+          {
+            "pathPattern": "{**catchall}"
+          }
+        ]
+      }
+    },
+    "clusters": {
+      "users": {
+        "destinations": {
+          "destination": {
+            "address": "https://localhost:6010"
+          }
+        }
+      },
+      "vacancies": {
+        "destinations": {
+          "destination": {
+            "address": "http://localhost:6020"
+          }
+        }
+      },
+      "notifications": {
+        "destinations": {
+          "destination1": {
+            "address": "http://localhost:6030"
+          }
+        }
+      }
+    }
+  }
+}

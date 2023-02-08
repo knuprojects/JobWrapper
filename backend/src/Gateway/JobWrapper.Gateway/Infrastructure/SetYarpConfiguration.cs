@@ -27,5 +27,4 @@ public static class SetYarpConfig
 
         return builder;
     }
-
 }

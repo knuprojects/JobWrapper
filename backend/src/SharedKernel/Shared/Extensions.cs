@@ -14,7 +14,7 @@ namespace Shared;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddShared(this WebApplicationBuilder builder, Assembly assemblies)
+    public static WebApplicationBuilder AddShared(this WebApplicationBuilder builder)
     {
         var appOptions = builder.Configuration.GetSection("app").BindOptions<AppOptions>();
         var appInfo = new AppInfo(appOptions.Name, appOptions.Version);

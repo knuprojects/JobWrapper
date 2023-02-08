@@ -1,10 +1,9 @@
 using JobWrapper.Gateway.Infrastructure;
 using Shared;
-using System.Reflection;
 
 var builder = WebApplication
     .CreateBuilder(args)
-    .AddShared(Assembly.GetExecutingAssembly());
+    .AddShared();
 
 builder.SetYarpConfiguration();
 

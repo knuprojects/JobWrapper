@@ -8,6 +8,7 @@ namespace Vacancies.Core.Enums;
 
 public static class Djinni
 {
+    const string _baseDjinniUrl = "https://djinni.co/";
     public enum Keywords
     {
         primary_keyword,
@@ -18,6 +19,7 @@ public static class Djinni
 
 public static class Dou
 {
+    const string _baseDouUrl = "https://jobs.dou.ua/";
     public enum Keywords
     {
         category,

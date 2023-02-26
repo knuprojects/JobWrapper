@@ -16,7 +16,7 @@ namespace Vacancies.Application.Drivers.Services
             //options.AddArguments("--allow-running-insecure-content");
             //options.AddArguments("--ignore-certificate-errors");
             //options.AddArguments("--no-sandbox");
-            options.AddArguments("--window-size=1280,1000");
+            options.AddArguments("--window-size=770,1000");
 
             IWebDriver driver = new ChromeDriver(pathWebDriver, options);
 

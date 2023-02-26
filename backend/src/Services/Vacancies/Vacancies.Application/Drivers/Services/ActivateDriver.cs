@@ -5,7 +5,7 @@ namespace Vacancies.Application.Drivers.Services
 {
     public class ActivateDriver : IActivateDriver
     {
-        public Task ActivateScrapingDriver()
+        public Task<IWebDriver> ActivateScrapingDriver()
         {
             var pathWebDriver = Directory.GetParent(Directory.GetCurrentDirectory()) + "\\Vacancies.Core\\Utils";
             var options = new ChromeOptions();

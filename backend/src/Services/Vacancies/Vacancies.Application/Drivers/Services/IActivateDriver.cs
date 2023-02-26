@@ -1,7 +1,9 @@
-﻿namespace Vacancies.Application.Drivers.Services
+﻿using OpenQA.Selenium;
+
+namespace Vacancies.Application.Drivers.Services
 {
     public interface IActivateDriver
     {
-        Task ActivateScrapingDriver();
+        Task<IWebDriver> ActivateScrapingDriver();
     }
 }

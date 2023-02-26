@@ -2,6 +2,7 @@
 
 public static class Consts
 {
+
     public class ExceptionCodes
     {
         public static string ValueIsNullOrEmpty => "value_is_null_or_empty";

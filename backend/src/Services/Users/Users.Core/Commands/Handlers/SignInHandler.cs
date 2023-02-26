@@ -33,13 +33,13 @@ public class SignInHandler : ICommandHandler<SignIn, JwtDto>
             throw new BaseException(ExceptionCodes.ValueIsNullOrEmpty,
                 $"User with: {command.UserName} not found");
 
-        bool isCorrectPassword = _passwordManager.Validate(command.Password, existingUser.Password.Value);
+        bool isCorrectPassword = _passwordManager.Validate(command.Password, existingUser.Password);
 
         if (!isCorrectPassword)
             throw new BaseException(ExceptionCodes.ValueMissmatch,
                 $"Password: {command.Password} is incorrect");
 
-        var jwt = _jwtProvider.CreateToken(existingUser.Gid.ToString(), existingUser.Email.Value, existingUser.RoleGid.ToString());
+        var jwt = _jwtProvider.CreateToken(existingUser.Gid.ToString(), existingUser.Email.Value, existingUser.RoleGid.ToString(), null);
 
         return new JwtDto(existingUser.Gid, jwt.AccessToken);
     }

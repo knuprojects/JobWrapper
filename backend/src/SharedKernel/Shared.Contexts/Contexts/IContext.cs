@@ -7,6 +7,12 @@ public interface IContext
     string UserId { get; }
 }
 
+public interface IMessageContext
+{
+    string MessageId { get; }
+    IContext Context { get; }
+}
+
 public class Context : IContext
 {
     public string TraceId { get; }
@@ -29,4 +35,22 @@ public class Context : IContext
     }
 }
 
-public record MessageContext(string MessageId, IContext Context);
+public class MessageContext : IMessageContext
+{
+    public string MessageId { get; set; }
+    public IContext Context { get; }
+
+    public MessageContext(
+        string messageId,
+        IContext context)
+    {
+        MessageId = messageId;
+        Context = context;
+    }
+
+    public MessageContext(
+        string messageId)
+    {
+        MessageId = messageId;
+    }
+}

@@ -8,7 +8,6 @@ using Shared.Contexts;
 using Shared.Http;
 using Shared.Observability.Logging;
 using Shared.Security;
-using System.Reflection;
 
 namespace Shared;
 

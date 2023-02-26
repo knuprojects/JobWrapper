@@ -1,6 +1,6 @@
 ﻿namespace Vacancies.Application.Vacancies.Dto
 {
-    public class VacancyReaponseModel
+    public class VacancyResponseModel
     {
         public Guid Gid { get; set; }
         public string Name { get; set; }

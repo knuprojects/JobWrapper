@@ -11,7 +11,7 @@ namespace Vacancies.Application.Vacancies.Djinni.Interfaces
 {
     public interface IScrapingVacanciesDjinni
     {
-        Task<List<VacancyReaponseModel>> ScrapVacanciesByDefaultUrl(string path, IWebDriver driver);
+        Task<List<VacancyResponseModel>> ScrapVacanciesByDefaultUrl(string path, IWebDriver driver);
 
         Task<List<HtmlNode>> ScrollVacancies(IWebDriver driver);
     }

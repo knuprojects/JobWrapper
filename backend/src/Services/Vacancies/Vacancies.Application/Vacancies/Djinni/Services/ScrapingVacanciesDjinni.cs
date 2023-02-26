@@ -9,14 +9,31 @@ namespace Vacancies.Application.Vacancies.Djinni.Services
     {
         private bool isFinish = false;
 
-        public async Task<List<VacancyReaponseModel>> ScrapVacanciesByDefaultUrl(string path, IWebDriver driver)
+        public async Task<List<VacancyResponseModel>> ScrapVacanciesByDefaultUrl(string path, IWebDriver driver)
         {
-            var vacancyReaponseModels = new List<VacancyReaponseModel>();
+            var vacancyReaponseModels = new List<VacancyResponseModel>();
 
             driver.Navigate().GoToUrl(path);
             await Task.Delay(2000);
 
-            var allVacancies = ScrollVacancies(driver);
+            var allVacancies = await ScrollVacancies(driver);
+
+            //foreach (var vacancy in allVacancies)
+            //{
+            //    var test = vacancy.SelectSingleNode("div[1]/div[2]/a");
+            //    var second = test.Attributes.FirstOrDefault(node =>
+            //            node.Name == "href")?.Value;
+
+            //    var vacancyName = vacancy.SelectSingleNode("div[1]/div[2]/a[2]/span").InnerText;
+
+            //    var descriptionBlock = vacancy.SelectSingleNode("div[2]/div[1]").InnerText;
+
+            //    var vacancyResponseModel = new VacancyResponseModel
+            //    {
+            //        Gid = Guid.NewGuid(),
+            //        Name = vacancy.Name
+            //    };
+            //}
 
             return vacancyReaponseModels;
         }
@@ -34,11 +51,27 @@ namespace Vacancies.Application.Vacancies.Djinni.Services
             vacancies = htmlBlock.DocumentNode.FirstChild.ChildNodes.Where(node =>
                     node.EndNode.Name == "li").ToList();
 
-            foreach( var node in vacancies )
+            /// TODO Refactor it and replace it in ScrapVacanciesByDefaultUrl method
+            foreach (var vacancy in vacancies)
             {
-                var test = node.SelectSingleNode("div[1]/div[2]/a");
+                var test = vacancy.SelectSingleNode("div[1]/div[2]/a");
                 var second = test.Attributes.FirstOrDefault(node =>
                         node.Name == "href")?.Value;
+
+                var vacancyName = vacancy.SelectSingleNode("div[1]/div[2]/a/span").InnerText ??
+                    vacancy.SelectSingleNode("div[1]/div[2]/a[2]/span").InnerText;
+
+                var descriptionBlock = vacancy.SelectSingleNode("div[2]/div[1]").InnerText;
+
+                var vacancyLocation = vacancy.SelectSingleNode("div[3]/div/div/span[3]").InnerText;
+
+                var vacancyResponseModel = new VacancyResponseModel
+                {
+                    Gid = Guid.NewGuid(),
+                    Name = vacancyName,
+                    Description = descriptionBlock,
+                    Location = vacancyLocation
+                };
             }
 
             while (!isFinish)

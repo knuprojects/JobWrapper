@@ -6,14 +6,12 @@ var builder = WebApplication
     .CreateBuilder(args)
     .AddShared();
 
-builder.Services.AddRedis();
+//builder.Services.AddRedis();
 builder.Services.AddMediator();
 builder.Services.AddPersistence();
 
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

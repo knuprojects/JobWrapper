@@ -1,0 +1,25 @@
+@url = https://localhost:6010/api
+
+@userGid = test
+@access-token = test
+
+###
+POST {{url}}/sign-up
+Content-Type: application/json
+
+{
+    "userName" : "sashaTkachuk",
+    "email" : "sashatkachuk09@ukr.net",
+    "password" : "Password1",
+    "IsNotificationsNeeded" : true,
+    "roleGid" : null
+}
+
+###
+POST {{url}}/sign-in
+Content-Type: application/json
+
+{
+    "userName" : "sashaTkachuk",
+    "password" : "Password1"
+}

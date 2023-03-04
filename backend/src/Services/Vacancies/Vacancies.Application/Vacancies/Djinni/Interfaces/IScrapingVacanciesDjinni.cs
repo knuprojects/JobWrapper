@@ -13,6 +13,6 @@ namespace Vacancies.Application.Vacancies.Djinni.Interfaces
     {
         Task<List<VacancyResponseModel>> ScrapVacanciesByDefaultUrl(string path, IWebDriver driver);
 
-        Task<List<HtmlNode>> ScrollVacancies(IWebDriver driver);
+        Task<List<VacancyResponseModel>> ScrollVacancies(IWebDriver driver);
     }
 }

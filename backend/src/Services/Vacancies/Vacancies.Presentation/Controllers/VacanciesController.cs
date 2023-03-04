@@ -24,7 +24,7 @@ namespace Vacancies.Presentation.Controllers
         {
             var defaultUrl = "https://djinni.co/jobs/?exp_level=1y";
             var driver = await _activateDriver.ActivateScrapingDriver();
-            var result = _scrapingVacanciesDjinni.ScrapVacanciesByDefaultUrl(defaultUrl, driver);
+            var result = await _scrapingVacanciesDjinni.ScrapVacanciesByDefaultUrl(defaultUrl, driver);
             return Ok(result);
         }
     }

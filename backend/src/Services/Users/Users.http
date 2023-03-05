@@ -6,6 +6,7 @@
 ###
 POST {{url}}/sign-up
 Content-Type: application/json
+###Authorization: Bearer {{accessToken}}
 
 {
     "userName" : "sashaTkachuk",

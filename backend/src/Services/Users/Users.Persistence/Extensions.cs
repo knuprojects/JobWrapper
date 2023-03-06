@@ -8,7 +8,6 @@ namespace Users.Persistence;
 
 public static class Extensions
 {
-
     public static IServiceCollection AddPersistence(this IServiceCollection services)
        => services
                   .AddScoped<IUserRepository, UserRepository>()

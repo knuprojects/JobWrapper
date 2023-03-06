@@ -1,5 +1,4 @@
 using Vacancies.Application;
-using Vacancies.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 

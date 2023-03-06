@@ -41,13 +41,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.Presentation", "src\S
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vacancies", "Vacancies", "{BB337B15-7A22-49DB-8284-BE4195822CF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vacancies.Core", "src\Services\Vacancies\Vacancies.Core\Vacancies.Core.csproj", "{4182358C-4E25-4436-9610-412BFE73BA77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Core", "src\Services\Vacancies\Vacancies.Core\Vacancies.Core.csproj", "{4182358C-4E25-4436-9610-412BFE73BA77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vacancies.Presentation", "src\Services\Vacancies\Vacancies.Presentation\Vacancies.Presentation.csproj", "{7A232409-20D2-472F-A66B-2B6658861F87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Presentation", "src\Services\Vacancies\Vacancies.Presentation\Vacancies.Presentation.csproj", "{7A232409-20D2-472F-A66B-2B6658861F87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vacancies.Persistence", "src\Services\Vacancies\Vacancies.Persistence\Vacancies.Persistence.csproj", "{99828069-171D-46C5-8637-D775FF7AC264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Persistence", "src\Services\Vacancies\Vacancies.Persistence\Vacancies.Persistence.csproj", "{99828069-171D-46C5-8637-D775FF7AC264}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vacancies.Application", "src\Services\Vacancies\Vacancies.Application\Vacancies.Application.csproj", "{BE76EB40-4737-4654-904E-F69825538733}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Application", "src\Services\Vacancies\Vacancies.Application\Vacancies.Application.csproj", "{BE76EB40-4737-4654-904E-F69825538733}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4182358C-4E25-4436-9610-412BFE73BA77} = {4182358C-4E25-4436-9610-412BFE73BA77}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using OpenQA.Selenium;
+﻿using Microsoft.AspNetCore.Mvc;
 using Vacancies.Application.Drivers.Services;
 using Vacancies.Application.Vacancies.Djinni.Interfaces;
 
@@ -20,11 +18,10 @@ namespace Vacancies.Presentation.Controllers
         }
 
         [HttpGet("scrape")]
-        public async Task<IActionResult> ScrapeVacancies()
+        public async Task<IActionResult> ScrapeVacancies(string path)
         {
-            var defaultUrl = "https://djinni.co/jobs/?exp_level=1y";
             var driver = await _activateDriver.ActivateScrapingDriver();
-            var result = await _scrapingVacanciesDjinni.ScrapVacanciesByDefaultUrl(defaultUrl, driver);
+            var result = await _scrapingVacanciesDjinni.ScrapVacanciesByUrl(path, driver);
             return Ok(result);
         }
     }

@@ -1,45 +1,42 @@
-﻿using Mediator;
+﻿using JobWrapper.Messages.Users;
+using Mediator;
+using Shared.Dal.Repositories;
 using Shared.Dal.Utils;
+using Shared.Messaging.Brokers;
 using Shared.Security.Cryptography;
-using Shared.Security.Providers;
-using Users.Core.Dto;
 using Users.Core.Entities;
-using Users.Core.Repositories;
 
 namespace Users.Core.Commands.Handlers;
 
-public class SignUpHandler : ICommandHandler<SignUp, JwtDto>
+public class SignUpHandler : ICommandHandler<SignUp>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
-    private readonly IRoleRepository _roleRepository;
+    private readonly IMessageBroker _messageBroker;
+    private readonly IBaseRepository _baseRepository;
     private readonly IPasswordManager _passwordManager;
-    private readonly IJwtProvider _jwtProvider;
 
     public SignUpHandler(
         IUnitOfWork unitOfWork,
-        IUserRepository userRepository,
-        IRoleRepository roleRepository,
-        IPasswordManager passwordManager,
-         IJwtProvider jwtProvider)
+        IMessageBroker messageBroker,
+        IBaseRepository baseRepository,
+        IPasswordManager passwordManager)
     {
-        _unitOfWork = unitOfWork;
-        _userRepository = userRepository;
-        _roleRepository = roleRepository;
-        _passwordManager = passwordManager;
-        _jwtProvider = jwtProvider;
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _messageBroker = messageBroker ?? throw new ArgumentNullException(nameof(messageBroker));
+        _baseRepository = baseRepository ?? throw new ArgumentNullException(nameof(baseRepository));
+        _passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
     }
 
-    public async ValueTask<JwtDto> Handle(SignUp command, CancellationToken cancellationToken)
+    public async ValueTask<Unit> Handle(SignUp command, CancellationToken cancellationToken)
     {
-        bool? isUserNameUnique = await _userRepository.IsUserNameUniqueAsync(command.UserName);
+        bool? isUserNameUnique = await _baseRepository.IsFieldUniqueAsync<User>(x => x.UserName == command.UserName);
 
-        bool? isEmailUnique = await _userRepository.IsEmailUniqueAsync(command.Password);
+        bool? isEmailUnique = await _baseRepository.IsFieldUniqueAsync<User>(x => x.Password == command.Password);
 
         string securePassword = _passwordManager.Secure(command.Password);
 
-        var validRole = command.RoleGid is not null ? await _roleRepository.GetRoleAsync(command.RoleGid.GetValueOrDefault())
-                                                    : await _roleRepository.GetRoleByNameAsync(Role.DefaultRole);
+        var validRole = command.RoleGid is not null ? await _baseRepository.GetByConditionAsync<Role>(x => x.Gid == command.RoleGid.GetValueOrDefault())
+                                                    : await _baseRepository.GetByConditionAsync<Role>(x => x.Name == Role.DefaultRole);
 
         var user = User.Init(command.UserName,
                              command.Email,
@@ -49,16 +46,18 @@ public class SignUpHandler : ICommandHandler<SignUp, JwtDto>
                              isEmailUnique,
                              command.IsNotificationsNeeded);
 
-        _userRepository.AddUser(user);
+        _baseRepository.Add(user);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        var confirmationToken = UserToken.Init(Guid.NewGuid().ToString("N"), user.Gid);
 
-        var jwt = _jwtProvider.CreateToken(
-            user.Gid.ToString(),
-            user.Email,
-            validRole.Name,
-            null);
+        _baseRepository.Add(confirmationToken);
 
-        return new JwtDto(user.Gid, jwt.AccessToken);
+        var message = new SignedUp(user.Gid, user.Email, confirmationToken.ConfirmationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken, message);
+
+        await _messageBroker.PublishAsync(message, cancellationToken);
+
+        return Unit.Value;
     }
 }

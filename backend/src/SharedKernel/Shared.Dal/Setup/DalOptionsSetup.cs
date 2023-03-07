@@ -6,7 +6,6 @@ namespace Shared.Dal.Setup;
 public static class BaseOptionsSetup
 {
     public static string ConfigurationSectionPostgresName => "postgresDatabase";
-    public static string ConfigurationSectionRedisName => "redisDatabase";
 }
 
 internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOptions>
@@ -31,27 +30,3 @@ internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOption
         }
     }
 }
-
-internal sealed class DalRedisOptionsSetup : IConfigureOptions<RedisOptions>
-{
-    private readonly IConfiguration _configuration;
-
-    public DalRedisOptionsSetup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
-    public void Configure(RedisOptions options)
-    {
-        if (options is not null)
-        {
-            var connectionString = _configuration.GetConnectionString("redisConnection");
-
-            if (!string.IsNullOrWhiteSpace(connectionString))
-                options.RedisConnection = connectionString;
-
-            _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionRedisName).Bind(options);
-        }
-    }
-}
-

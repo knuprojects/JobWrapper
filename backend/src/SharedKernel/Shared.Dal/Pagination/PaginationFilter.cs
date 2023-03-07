@@ -7,6 +7,14 @@ public class PaginationFilter
     private int _pageNumber;
     private int _pageSize;
 
+    public PaginationFilter(
+        int pageNumber,
+        int pageSize)
+    {
+        PageNumber = pageNumber;
+        PageSize = pageSize;
+    }
+
     public int PageNumber
     {
         get => _pageNumber;
@@ -20,9 +28,9 @@ public class PaginationFilter
     }
 }
 
-public class Response<TEntity>
+public class PaginationResponse<TEntity>
 {
-    public Response()
+    public PaginationResponse()
     {
         Items = new List<TEntity>();
         Succeeded = true;
@@ -39,20 +47,22 @@ public class Response<TEntity>
 
 public static class PaginationExtensions
 {
-    public static async Task<Response<TEntity>> PaginateAsync<TEntity>(
+    public static async Task<PaginationResponse<TEntity>> PaginateAsync<TEntity>(
         this IQueryable<TEntity> query,
         PaginationFilter filter,
         CancellationToken cancellationToken = default)
     {
-        var response = new Response<TEntity>();
+        var response = new PaginationResponse<TEntity>();
 
         response.CurrentPage = filter.PageNumber;
         response.PageSize = filter.PageSize;
         response.TotalItems = await query.CountAsync(cancellationToken);
+
         response.Items = await query
             .Skip((filter.PageNumber - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
+
         response.TotalPages = (int)Math.Ceiling(response.TotalItems / (double)filter.PageSize);
 
         return response;

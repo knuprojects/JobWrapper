@@ -1,4 +1,4 @@
-@url = https://localhost:6010/api
+@url = http://localhost:5010/api
 
 @userGid = test
 @access-token = test
@@ -6,7 +6,6 @@
 ###
 POST {{url}}/sign-up
 Content-Type: application/json
-###Authorization: Bearer {{accessToken}}
 
 {
     "userName" : "sashaTkachuk",

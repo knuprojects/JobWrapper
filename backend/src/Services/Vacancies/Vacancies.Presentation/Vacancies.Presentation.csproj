@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Vacancies.Application\Vacancies.Application.csproj" />
     <ProjectReference Include="..\Vacancies.Persistence\Vacancies.Persistence.csproj" />
   </ItemGroup>
 

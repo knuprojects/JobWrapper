@@ -47,11 +47,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Presentation", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Persistence", "src\Services\Vacancies\Vacancies.Persistence\Vacancies.Persistence.csproj", "{99828069-171D-46C5-8637-D775FF7AC264}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Application", "src\Services\Vacancies\Vacancies.Application\Vacancies.Application.csproj", "{BE76EB40-4737-4654-904E-F69825538733}"
-	ProjectSection(ProjectDependencies) = postProject
-		{4182358C-4E25-4436-9610-412BFE73BA77} = {4182358C-4E25-4436-9610-412BFE73BA77}
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,10 +117,6 @@ Global
 		{99828069-171D-46C5-8637-D775FF7AC264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99828069-171D-46C5-8637-D775FF7AC264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99828069-171D-46C5-8637-D775FF7AC264}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BE76EB40-4737-4654-904E-F69825538733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BE76EB40-4737-4654-904E-F69825538733}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BE76EB40-4737-4654-904E-F69825538733}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BE76EB40-4737-4654-904E-F69825538733}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,7 +143,6 @@ Global
 		{4182358C-4E25-4436-9610-412BFE73BA77} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
 		{7A232409-20D2-472F-A66B-2B6658861F87} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
 		{99828069-171D-46C5-8637-D775FF7AC264} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
-		{BE76EB40-4737-4654-904E-F69825538733} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8F519462-62E7-4B35-9056-4B4C74100B50}

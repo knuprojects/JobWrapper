@@ -37,8 +37,9 @@ public class ScrapperService : IScrapperService
 
     public async ValueTask<List<VacancyResponse>> ScrollVacancies(IWebDriver driver)
     {
+        List<HtmlNode>? vacancies = new List<HtmlNode>();
+
         List<VacancyResponse> response = new List<VacancyResponse>();
-        List<HtmlNode>? vacancies = null;
 
         var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 
@@ -49,11 +50,16 @@ public class ScrapperService : IScrapperService
         {
             if (paginationButton is not null)
             {
-                response = await FillVacancies(driver);
+                // TODO: check bug for this sln
+                //response = await FillVacancies(driver);
+
+                //paginationButton.Click();
+
+                //await Task.Delay(2500);
 
                 paginationButton.Click();
 
-                await Task.Delay(200);
+                await Task.Delay(2500);
 
                 paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 

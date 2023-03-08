@@ -30,34 +30,34 @@ public class ScrapperService : IScrapperService
     {
         driver.Navigate().GoToUrl(path);
 
-        await Task.Delay(500);
+        await Task.Delay(200);
 
-        var allVacancies = await ScrollVacancies(path, driver);
-
-        return allVacancies;
+        return await ScrollVacancies(driver);
     }
 
-    public async ValueTask<List<VacancyResponse>> ScrollVacancies(string path, IWebDriver driver)
+    public async ValueTask<List<VacancyResponse>> ScrollVacancies(IWebDriver driver)
     {
         List<VacancyResponse> response = new List<VacancyResponse>();
-        List<HtmlNode>? vacancies = new List<HtmlNode>();
+        List<HtmlNode>? vacancies = null;
 
-        IWebElement? paginationButton = _elementFinder.FindElementsByXpath(ref XpathConsts.Xpath.PaginationButton);
+        var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 
         if (paginationButton is null)
-            return await FillVacancies();
+            return await FillVacancies(driver);
 
         while (!isFinish)
         {
-            if (paginationButton != null)
+            if (paginationButton is not null)
             {
+                response = await FillVacancies(driver);
+
                 paginationButton.Click();
 
-                await Task.Delay(2500);
+                await Task.Delay(200);
 
-                paginationButton = _elementFinder.FindElementsByXpath(ref XpathConsts.Xpath.PaginationButton);
+                paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 
-                HtmlDocument document = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+                HtmlDocument document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
                 List<HtmlNode>? vacanciesPull = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
 
@@ -94,13 +94,18 @@ public class ScrapperService : IScrapperService
 
                 //var salaryBlock = _elementFinder.FindElementsByXpath("//*[@class='public-salary-item']");
 
-                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.CurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind);
+                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.CurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
+                             _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalCurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
-                if (douUri is null) continue;
+                if (douUri is null)
+                {
+                    driver.Quit();
+                    continue;
+                }
 
                 await GoToUri(driver, douUri);
 
-                var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.DouNavBlockUri, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+                var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouNavBlockUri, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
                 var douNavBlockElementsList = _elementFinder.FindChildNodesByElement(douDocument, XpathConsts.ElementsToFind.ListElementToFind);
 
@@ -135,7 +140,8 @@ public class ScrapperService : IScrapperService
 
                 await GoToUri(driver, currentMapUri);
 
-                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.MapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
+                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.MapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind) ??
+                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalMapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
 
                 coordinates = SplitUri(ref metaUri);
 
@@ -145,12 +151,10 @@ public class ScrapperService : IScrapperService
             var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyName) ??
                               _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.AdditionalDjinniVacancyName);
 
-            var description = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyDescription);
-
             var response = new VacancyResponse(
                 Guid.NewGuid(),
                 vacancyName,
-                description,
+                new List<string>(),
                 coordinates,
                 null);
 
@@ -160,9 +164,9 @@ public class ScrapperService : IScrapperService
         return vacancyResponse;
     }
 
-    private async ValueTask<List<VacancyResponse>> FillVacancies()
+    private async ValueTask<List<VacancyResponse>> FillVacancies(IWebDriver driver)
     {
-        var document = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
         var vacancies = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
 
@@ -175,7 +179,7 @@ public class ScrapperService : IScrapperService
 
         driver.Navigate().GoToUrl(path + additionalPath);
 
-        await Task.Delay(500);
+        await Task.Delay(200);
 
         return driver;
     }
@@ -184,7 +188,7 @@ public class ScrapperService : IScrapperService
     {
         driver?.Navigate().GoToUrl(uri);
 
-        await Task.Delay(500);
+        await Task.Delay(200);
     }
 
     private string SplitUri(ref string uri)

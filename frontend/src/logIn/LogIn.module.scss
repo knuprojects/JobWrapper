@@ -5,22 +5,24 @@
    border-radius: 10px;
    width: 1000px;
    height: 400px;
-   margin: 30px auto;
-   padding: 40px;
+   margin: 175px auto;
+   padding: 30px;
    flex-direction: column;
 }
-
 .input {
    height: 37px;
    width: 372px;
-   
+   border-radius:10px;
+   border-color: #989d96;
+   font-family: 'Roboto', sans-serif;
 }
 .link{
+   font-size: 14px;
    cursor: pointer;
    margin-top: 12%;
-   margin-left: 24%;
+   text-align: center;
 }
-.register {
+.login {
    height: 400px;
    position: static;
    display: flex;
@@ -28,22 +30,23 @@
    justify-content: center;
 }
 
-.inputs {
+.inputs {   
    margin: 0 100px;
 }
-
 .img {
    margin: 0 120px;
 }
 h4{
    margin-left: 44%;
+   // 
 }
 .button {
    margin: 0 auto;
    display: block;
-   background: #cfcfcf;
-   border-radius: 10px;
-   border: 4px double #cccccc;
+   background: #9dd588;
+   color:#e7F6FF;
+   border-radius: 18px;
+   border: 0;
    font-size: 15px;
    padding: 20px;
    display: inline-flex;
@@ -56,5 +59,9 @@ h4{
 }
 
 .button:hover{
-   color:darken($color: #626262, $amount: 10)
+   color:lighten($color: #c5e3ba, $amount: 5)
+}
+.button:active{
+   color:darken($color: #9dd588, $amount: 5)
+   
 }

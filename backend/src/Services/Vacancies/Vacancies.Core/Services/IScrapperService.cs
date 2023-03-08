@@ -16,6 +16,15 @@ public class ScrapperService : IScrapperService
 {
     private bool isFinish = false;
     private readonly IActivateDriver _activateDriver;
+    private readonly IElementFinder _elementFinder;
+
+    public ScrapperService(
+        IActivateDriver activateDriver,
+        IElementFinder elementFinder)
+    {
+        _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
+        _elementFinder = elementFinder ?? throw new ArgumentNullException(nameof(elementFinder));
+    }
 
     public async ValueTask<List<VacancyResponse>> ScrapVacanciesByUrl(string path, IWebDriver driver)
     {
@@ -30,43 +39,35 @@ public class ScrapperService : IScrapperService
 
     public async ValueTask<List<VacancyResponse>> ScrollVacancies(string path, IWebDriver driver)
     {
-        List<HtmlNode>? vacancies = null;
+        List<VacancyResponse> response = new List<VacancyResponse>();
+        List<HtmlNode>? vacancies = new List<HtmlNode>();
 
-        var response = new List<VacancyResponse>();
+        IWebElement? paginationButton = _elementFinder.FindElementsByXpath(ref XpathConsts.Xpath.PaginationButton);
 
-        string coordinates;
-
-        var paginationButton = driver.FindElements(By.XPath("//div[@class='d-md-none mb-3 text-center']"))?.FirstOrDefault();
-
-        var htmlBlock = new HtmlDocument();
-        htmlBlock.LoadHtml(driver.FindElements(By.XPath("//div[@class='row']/div[1]/ul"))
-                .FirstOrDefault()?.GetAttribute("outerHTML"));
-
-        vacancies = htmlBlock.DocumentNode.FirstChild.ChildNodes.Where(node =>
-                node.EndNode.Name == "li").ToList();
-
-        response = await FindVacancies(vacancies, path);
+        if (paginationButton is null)
+            return await FillVacancies();
 
         while (!isFinish)
         {
             if (paginationButton != null)
             {
                 paginationButton.Click();
+
                 await Task.Delay(2500);
-                paginationButton = driver.FindElements(By.XPath("//div[@class='d-md-none mb-3 text-center']"))?.FirstOrDefault();
 
-                htmlBlock.LoadHtml(driver.FindElements(By.XPath("//div[@class='row']/div[1]/ul"))
-                    .FirstOrDefault()?.GetAttribute("outerHTML"));
+                paginationButton = _elementFinder.FindElementsByXpath(ref XpathConsts.Xpath.PaginationButton);
 
-                var currentVacanciesPull = htmlBlock.DocumentNode.FirstChild.ChildNodes.Where(node =>
-                    node.EndNode.Name == "li").ToList();
+                HtmlDocument document = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
-                foreach (var item in currentVacanciesPull)
+                List<HtmlNode>? vacanciesPull = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
+
+                if (vacanciesPull.Any())
                 {
-                    vacancies.Add(item);
+                    foreach (var item in vacanciesPull)
+                        vacancies.Add(item);
                 }
 
-                response = await FindVacancies(vacancies, path);
+                response = await FindVacancies(vacancies);
             }
             else
                 isFinish = true;
@@ -77,111 +78,119 @@ public class ScrapperService : IScrapperService
         return response;
     }
 
-    private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies, string baseSiteUrl)
+    private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
     {
-        var vacancyResponseModels = new List<VacancyResponse>();
-        string coordinates = null;
-        string salary = null;
+        var vacancyResponse = new List<VacancyResponse>();
+        string coordinates = "";
+        //string salary;
 
         foreach (var vacancy in vacancies)
         {
-            var vacancyDjinniUrl = vacancy.SelectSingleNode("div[1]/div[2]/a").Attributes.FirstOrDefault(node =>
-                    node.Name == "href")?.Value;
+            var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, ref XpathConsts.Xpath.CurrentDjinniVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
-            if (vacancyDjinniUrl != null)
+            if (additionalDjinniPath != null)
             {
-                var currentVacancyDriver = await _activateDriver.ActivateScrapingDriver();
-                currentVacancyDriver.Navigate().GoToUrl(VacanciesConsts.DjinniUrl + vacancyDjinniUrl);
-                await Task.Delay(500);
+                var driver = await ActivateScrapping(VacanciesConsts.DjinniUrl, additionalDjinniPath);
 
-                var salaryBlock = currentVacancyDriver.FindElements(By.XPath("//*[@class='public-salary-item']"))?
-                    .FirstOrDefault();
+                //var salaryBlock = _elementFinder.FindElementsByXpath("//*[@class='public-salary-item']");
 
+                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.CurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
-                var currentDouUrl = currentVacancyDriver
-                    .FindElements(By.XPath("//*[@class='container job-post-page']/div[2]/div[1]/div[2]/a[2]"))?
-                    .FirstOrDefault()?.GetAttribute("href");
+                if (douUri is null) continue;
 
-                if (currentDouUrl is null)
+                await GoToUri(driver, douUri);
+
+                var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.DouNavBlockUri, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+
+                var douNavBlockElementsList = _elementFinder.FindChildNodesByElement(douDocument, XpathConsts.ElementsToFind.ListElementToFind);
+
+                foreach (var navNode in douNavBlockElementsList)
                 {
-                    continue;
-                }
+                    var innerTextOfElementInNavBlock = _elementFinder.FindSingleNodeInnerTextByXpath(navNode, ref XpathConsts.ElementsToFind.ElementInnerTextToFind);
 
-                currentVacancyDriver.Navigate().GoToUrl(currentDouUrl);
-                await Task.Delay(500);
-
-                var companyNavBlock = new HtmlDocument();
-                companyNavBlock.LoadHtml(currentVacancyDriver.FindElements(By.XPath("//*[@class='company-nav']"))
-                        .FirstOrDefault()?.GetAttribute("outerHTML"));
-
-                var companyNavListLi = companyNavBlock.DocumentNode.FirstChild.ChildNodes.Where(node =>
-                        node.EndNode.Name == "li").ToList();
-
-                string companyNavInnerText = null;
-                string currentOficeUrl = null;
-
-                foreach (var companyNav in companyNavListLi)
-                {
-                    companyNavInnerText = companyNav.SelectSingleNode("a").InnerText;
-                    if (companyNavInnerText == "Офіси")
+                    if (innerTextOfElementInNavBlock is "Офіси")
                     {
-                        currentOficeUrl = companyNav.SelectSingleNode("a").Attributes.FirstOrDefault(node =>
-                            node.Name == "href")?.Value;
+                        var currentOfficeUri = _elementFinder.FindSingleNodeByXpathAndElement(navNode, ref XpathConsts.ElementsToFind.ElementInnerTextToFind, XpathConsts.ElementsToFind.AttributeToFind);
 
-                        if (currentOficeUrl is null)
+                        if (currentOfficeUri is null)
                         {
-                            currentVacancyDriver.Quit();
+                            driver.Quit();
                             continue;
                         }
 
-                        currentVacancyDriver.Navigate().GoToUrl(currentOficeUrl);
-                        await Task.Delay(500);
+                        await GoToUri(driver, currentOfficeUri);
+
                         break;
                     }
                 }
 
-                var currentMapUrl = currentVacancyDriver
-                        .FindElements(By.XPath("//*[@class='g-company-wrapper']/div[2]/div[2]/div[1]/div/div/div/div[2]/div[1]/div/div/div[1]/span/a"))?
-                        .FirstOrDefault()?.GetAttribute("href") ??
-                        currentVacancyDriver
-                        .FindElements(By.XPath("//*[@class='g-company-wrapper']/div[2]/div[2]/div[1]/div/div/div[1]/div[2]/div/div/div[1]/span/a"))?
-                        .FirstOrDefault()?.GetAttribute("href");
+                var currentMapUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DefaultDouMapUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
+                                    _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalDouMapUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
-                if (currentMapUrl is null)
+                if (currentMapUri is null)
                 {
-                    currentVacancyDriver.Quit();
+                    driver.Quit();
                     continue;
                 }
 
-                currentVacancyDriver.Navigate().GoToUrl(currentMapUrl);
-                await Task.Delay(500);
+                await GoToUri(driver, currentMapUri);
 
-                var metaUrl = currentVacancyDriver
-                    .FindElements(By.XPath("/html/head/meta[10]"))?
-                    .FirstOrDefault().GetAttribute("content");
+                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.MapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
 
-                var firstPart = metaUrl.Substring(metaUrl.IndexOf("center=") + 7);
+                coordinates = SplitUri(ref metaUri);
 
-                coordinates = firstPart.Substring(0, firstPart.IndexOf("&zoom"));
-
-                currentVacancyDriver.Quit();
+                driver.Quit();
             }
 
-            var vacancyName = vacancy.SelectSingleNode("div[1]/div[2]/a/span").InnerText ??
-                vacancy.SelectSingleNode("div[1]/div[2]/a[2]/span").InnerText;
+            var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyName) ??
+                              _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.AdditionalDjinniVacancyName);
 
-            var descriptionBlock = vacancy.SelectSingleNode("div[2]/div[1]").InnerText;
+            var description = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyDescription);
 
             var response = new VacancyResponse(
                 Guid.NewGuid(),
                 vacancyName,
-                descriptionBlock,
+                description,
                 coordinates,
                 null);
 
-            vacancyResponseModels.Add(response);
+            vacancyResponse.Add(response);
         }
 
-        return vacancyResponseModels;
+        return vacancyResponse;
+    }
+
+    private async ValueTask<List<VacancyResponse>> FillVacancies()
+    {
+        var document = _elementFinder.LoadHtmlByXpathAndAttribute(ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+
+        var vacancies = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
+
+        return await FindVacancies(vacancies);
+    }
+
+    private async ValueTask<IWebDriver?> ActivateScrapping(string path, string additionalPath)
+    {
+        var driver = await _activateDriver.ActivateScrapingDriver();
+
+        driver.Navigate().GoToUrl(path + additionalPath);
+
+        await Task.Delay(500);
+
+        return driver;
+    }
+
+    private async ValueTask GoToUri(IWebDriver? driver, string uri)
+    {
+        driver?.Navigate().GoToUrl(uri);
+
+        await Task.Delay(500);
+    }
+
+    private string SplitUri(ref string uri)
+    {
+        var firstPart = uri.Substring(uri.IndexOf("center=") + 7);
+
+        return firstPart.Substring(0, firstPart.IndexOf("&zoom"));
     }
 }

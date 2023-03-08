@@ -1,12 +1,10 @@
 using Shared;
-using Shared.Dal;
 using Users.Persistence;
 
 var builder = WebApplication
     .CreateBuilder(args)
     .AddShared();
 
-builder.Services.AddRedis();
 builder.Services.AddMediator();
 builder.Services.AddPersistence();
 

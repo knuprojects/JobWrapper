@@ -8,6 +8,7 @@ public class Vacancy : BaseDocument
 {
     public string Name { get; set; }
     public List<string> Skills { get; set; }
+    public string EnglishLvl { get; set; }
     public string Location { get; set; }
     public string Salary { get; set; }
     public string RequestUri { get; set; }

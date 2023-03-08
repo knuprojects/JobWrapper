@@ -46,6 +46,8 @@ public class ScrapperService : IScrapperService
         if (paginationButton is null)
             return await FillVacancies(driver);
 
+        response = await FillVacancies(driver);
+
         while (!isFinish)
         {
             if (paginationButton is not null)

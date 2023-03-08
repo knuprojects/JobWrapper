@@ -45,8 +45,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Core", "src\Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Presentation", "src\Services\Vacancies\Vacancies.Presentation\Vacancies.Presentation.csproj", "{7A232409-20D2-472F-A66B-2B6658861F87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vacancies.Persistence", "src\Services\Vacancies\Vacancies.Persistence\Vacancies.Persistence.csproj", "{99828069-171D-46C5-8637-D775FF7AC264}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,10 +111,6 @@ Global
 		{7A232409-20D2-472F-A66B-2B6658861F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A232409-20D2-472F-A66B-2B6658861F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A232409-20D2-472F-A66B-2B6658861F87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99828069-171D-46C5-8637-D775FF7AC264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99828069-171D-46C5-8637-D775FF7AC264}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99828069-171D-46C5-8637-D775FF7AC264}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99828069-171D-46C5-8637-D775FF7AC264}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,7 +136,6 @@ Global
 		{BB337B15-7A22-49DB-8284-BE4195822CF2} = {5018419A-8138-4169-81A7-37CCB93693FE}
 		{4182358C-4E25-4436-9610-412BFE73BA77} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
 		{7A232409-20D2-472F-A66B-2B6658861F87} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
-		{99828069-171D-46C5-8637-D775FF7AC264} = {BB337B15-7A22-49DB-8284-BE4195822CF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8F519462-62E7-4B35-9056-4B4C74100B50}

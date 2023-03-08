@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Shared.Dal.Initializers;
+using Shared.Dal.Repositories;
 using Shared.Dal.Setup;
 using Shared.Dal.Utils;
-using StackExchange.Redis;
 
 namespace Shared.Dal;
 
@@ -33,18 +34,18 @@ public static class Extensions
     }
 
 
-    public static IServiceCollection AddRedis(this IServiceCollection services)
+    public static IServiceCollection AddMongo(this IServiceCollection services)
     {
-        services.ConfigureOptions<RedisOptions>();
+        services.ConfigureOptions<MongoOptions>();
 
-        services.AddSingleton<IConnectionMultiplexer>(serviceProvider =>
+        services.AddSingleton<IMongoDatabase>(options =>
         {
-            var redisOptions = serviceProvider.GetService<IOptions<RedisOptions>>()!.Value;
-
-            return ConnectionMultiplexer.Connect(redisOptions.RedisConnection);
+            var settings = options.GetService<IOptions<MongoOptions>>()!.Value;
+            var client = new MongoClient(settings.MongoConnection);
+            return client.GetDatabase(settings.DatabaseName);
         });
 
-        //services.AddScoped<ICacheService, CacheService>();
+        services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
 
         return services;
     }

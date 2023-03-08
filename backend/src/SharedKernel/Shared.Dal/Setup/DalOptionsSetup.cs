@@ -6,7 +6,7 @@ namespace Shared.Dal.Setup;
 public static class BaseOptionsSetup
 {
     public static string ConfigurationSectionPostgresName => "postgresDatabase";
-    public static string ConfigurationSectionRedisName => "redisDatabase";
+    public static string ConfigurationSectionMongoName => "mongoDatabase";
 }
 
 internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOptions>
@@ -32,26 +32,27 @@ internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOption
     }
 }
 
-internal sealed class DalRedisOptionsSetup : IConfigureOptions<RedisOptions>
+internal sealed class DalMongoOptionsSetup : IConfigureOptions<MongoOptions>
 {
     private readonly IConfiguration _configuration;
 
-    public DalRedisOptionsSetup(IConfiguration configuration)
+    public DalMongoOptionsSetup(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-    public void Configure(RedisOptions options)
+    public void Configure(MongoOptions options)
     {
         if (options is not null)
         {
-            var connectionString = _configuration.GetConnectionString("redisConnection");
+            var connectionString = _configuration.GetConnectionString("mongoConnection");
 
             if (!string.IsNullOrWhiteSpace(connectionString))
-                options.RedisConnection = connectionString;
+                options.MongoConnection = connectionString;
 
-            _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionRedisName).Bind(options);
+            _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionMongoName).Bind(options);
         }
     }
 }
+
 

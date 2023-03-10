@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
+using System.Reflection.Metadata;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Helpers;
 using Vacancies.Core.Responses;
@@ -42,10 +43,10 @@ public class ScrapperService : IScrapperService
             return await FillVacanciesAsync(driver);
 
         var items = await FillVacanciesAsync(driver);
+        
+        items = await FillWithPaginationAsync(driver, paginationButton);
 
-        var (paginationButtonNew, document, itemsNew) = ReloadDocument(driver);
-
-        return await FillWithPaginationAsync(driver, paginationButtonNew, itemsNew);
+        return items;
     }
 
     private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
@@ -131,15 +132,13 @@ public class ScrapperService : IScrapperService
         return vacancyResponse;
     }
 
-    private (IWebElement?, HtmlDocument?, List<HtmlNode?>) ReloadDocument(IWebDriver driver)
+    private List<HtmlNode?> ReloadDocument(IWebDriver driver)
     {
-        var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
-
         var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
         var items = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
 
-        return (paginationButton, document, items);
+        return items;
     }
 
     private List<HtmlNode?> SetVacancies(IWebDriver driver)
@@ -156,7 +155,7 @@ public class ScrapperService : IScrapperService
         return await FindVacancies(vacancies);
     }
 
-    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement? paginationButton, List<HtmlNode?> items)
+    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement paginationButton)
     {
         var vacancies = new List<HtmlNode?>();
         var response = new List<VacancyResponse>();
@@ -166,8 +165,12 @@ public class ScrapperService : IScrapperService
             if (paginationButton is not null)
             {
                 paginationButton.Click();
-
                 await Task.Delay(200);
+
+
+                paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
+
+                var items = ReloadDocument(driver);
 
                 if (items.Any())
                     foreach (var item in items)
@@ -178,6 +181,7 @@ public class ScrapperService : IScrapperService
             else
                 isFinish = true;
         }
+        driver.Quit();
 
         return response;
     }

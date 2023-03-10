@@ -12,7 +12,7 @@ function Registration() {
                 <div className={style.registration}>
                     <ul>
                         <li>
-                            <input className={style.input} placeholder="Username"></input>
+                            <input className={style.input} placeholder="Username" /> 
                         </li>
                         <li>
                             <input className={style.input} placeholder="Email"></input>

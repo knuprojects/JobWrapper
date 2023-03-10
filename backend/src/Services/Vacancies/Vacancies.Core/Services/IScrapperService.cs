@@ -94,7 +94,7 @@ public class ScrapperService : IScrapperService
 
         foreach (var vacancy in vacancies)
         {
-            var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, ref XpathConsts.Xpath.CurrentDjinniVacancy, XpathConsts.ElementsToFind.AttributeToFind);
+            var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, ref XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
             if (additionalDjinniPath != null)
             {
@@ -102,8 +102,8 @@ public class ScrapperService : IScrapperService
 
                 //var salaryBlock = _elementFinder.FindElementsByXpath("//*[@class='public-salary-item']");
 
-                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.CurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
-                             _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalCurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind);
+                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
+                             _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouAdditionalCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
                 if (douUri is null)
                 {
@@ -137,8 +137,8 @@ public class ScrapperService : IScrapperService
                     }
                 }
 
-                var currentMapUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DefaultDouMapUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
-                                    _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalDouMapUri, ref XpathConsts.ElementsToFind.AttributeToFind);
+                var currentMapUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapDefaultUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
+                                    _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapAdditionalUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
                 if (currentMapUri is null)
                 {
@@ -148,8 +148,8 @@ public class ScrapperService : IScrapperService
 
                 await GoToUri(driver, currentMapUri);
 
-                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.MapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind) ??
-                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalMapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
+                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind) ??
+                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapAdditionalMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
 
                 coordinates = SplitUri(ref metaUri);
 
@@ -157,7 +157,7 @@ public class ScrapperService : IScrapperService
             }
 
             var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyName) ??
-                              _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.AdditionalDjinniVacancyName);
+                              _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniAdditionalVacancyName);
 
             var response = new VacancyResponse(
                 Guid.NewGuid(),

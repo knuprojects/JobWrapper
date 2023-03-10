@@ -43,7 +43,9 @@ public class ScrapperService : IScrapperService
 
         var items = await FillVacanciesAsync(driver);
 
-        return await FillWithPaginationAsync(driver, paginationButton, items);
+        var (paginationButtonNew, document, itemsNew) = ReloadDocument(driver);
+
+        return await FillWithPaginationAsync(driver, paginationButtonNew, itemsNew);
     }
 
     private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
@@ -129,6 +131,17 @@ public class ScrapperService : IScrapperService
         return vacancyResponse;
     }
 
+    private (IWebElement?, HtmlDocument?, List<HtmlNode?>) ReloadDocument(IWebDriver driver)
+    {
+        var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
+
+        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+
+        var items = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
+
+        return (paginationButton, document, items);
+    }
+
     private List<HtmlNode?> SetVacancies(IWebDriver driver)
     {
         var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
@@ -143,7 +156,7 @@ public class ScrapperService : IScrapperService
         return await FindVacancies(vacancies);
     }
 
-    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement? paginationButton, List<VacancyResponse> items)
+    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement? paginationButton, List<HtmlNode?> items)
     {
         var vacancies = new List<HtmlNode?>();
         var response = new List<VacancyResponse>();
@@ -156,10 +169,8 @@ public class ScrapperService : IScrapperService
 
                 await Task.Delay(200);
 
-                var vacanciesPull = SetVacancies(driver);
-
-                if (vacanciesPull.Any())
-                    foreach (var item in vacanciesPull)
+                if (items.Any())
+                    foreach (var item in items)
                         vacancies.Add(item);
 
                 response = await FindVacancies(vacancies);

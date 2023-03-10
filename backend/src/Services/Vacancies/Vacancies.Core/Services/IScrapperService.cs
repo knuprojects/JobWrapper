@@ -8,7 +8,6 @@ namespace Vacancies.Core.Services;
 
 public interface IScrapperService
 {
-    //TODO: ReadOnly
     ValueTask<List<VacancyResponse>> ScrapVacanciesByUrl(string path, IWebDriver driver);
 }
 
@@ -37,60 +36,20 @@ public class ScrapperService : IScrapperService
 
     public async ValueTask<List<VacancyResponse>> ScrollVacancies(IWebDriver driver)
     {
-        List<HtmlNode>? vacancies = new List<HtmlNode>();
-
-        List<VacancyResponse> response = new List<VacancyResponse>();
-
         var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 
         if (paginationButton is null)
-            return await FillVacancies(driver);
+            return await FillVacanciesAsync(driver);
 
-        response = await FillVacancies(driver);
+        var items = await FillVacanciesAsync(driver);
 
-        while (!isFinish)
-        {
-            if (paginationButton is not null)
-            {
-                // TODO: check bug for this sln
-                //response = await FillVacancies(driver);
-
-                //paginationButton.Click();
-
-                //await Task.Delay(2500);
-
-                paginationButton.Click();
-
-                await Task.Delay(2500);
-
-                paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
-
-                HtmlDocument document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
-
-                List<HtmlNode>? vacanciesPull = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
-
-                if (vacanciesPull.Any())
-                {
-                    foreach (var item in vacanciesPull)
-                        vacancies.Add(item);
-                }
-
-                response = await FindVacancies(vacancies);
-            }
-            else
-                isFinish = true;
-        }
-
-        driver.Quit();
-
-        return response;
+        return await FillWithPaginationAsync(driver, paginationButton, items);
     }
 
     private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
     {
         var vacancyResponse = new List<VacancyResponse>();
         string coordinates = "";
-        //string salary;
 
         foreach (var vacancy in vacancies)
         {
@@ -98,9 +57,7 @@ public class ScrapperService : IScrapperService
 
             if (additionalDjinniPath != null)
             {
-                var driver = await ActivateScrapping(VacanciesConsts.DjinniUrl, additionalDjinniPath);
-
-                //var salaryBlock = _elementFinder.FindElementsByXpath("//*[@class='public-salary-item']");
+                var driver = await ActivateScrappingAsync(VacanciesConsts.DjinniUrl, additionalDjinniPath);
 
                 var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.CurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalCurrentDouUri, ref XpathConsts.ElementsToFind.AttributeToFind);
@@ -111,7 +68,7 @@ public class ScrapperService : IScrapperService
                     continue;
                 }
 
-                await GoToUri(driver, douUri);
+                await GoToUriAsync(driver, douUri);
 
                 var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouNavBlockUri, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
@@ -131,7 +88,7 @@ public class ScrapperService : IScrapperService
                             continue;
                         }
 
-                        await GoToUri(driver, currentOfficeUri);
+                        await GoToUriAsync(driver, currentOfficeUri);
 
                         break;
                     }
@@ -146,7 +103,7 @@ public class ScrapperService : IScrapperService
                     continue;
                 }
 
-                await GoToUri(driver, currentMapUri);
+                await GoToUriAsync(driver, currentMapUri);
 
                 var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.MapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind) ??
                               _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.AdditionalMapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
@@ -172,16 +129,49 @@ public class ScrapperService : IScrapperService
         return vacancyResponse;
     }
 
-    private async ValueTask<List<VacancyResponse>> FillVacancies(IWebDriver driver)
+    private List<HtmlNode?> SetVacancies(IWebDriver driver)
     {
         var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
-        var vacancies = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
+        return _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
+    }
+
+    private async ValueTask<List<VacancyResponse>> FillVacanciesAsync(IWebDriver driver)
+    {
+        var vacancies = SetVacancies(driver);
 
         return await FindVacancies(vacancies);
     }
 
-    private async ValueTask<IWebDriver?> ActivateScrapping(string path, string additionalPath)
+    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement? paginationButton, List<VacancyResponse> items)
+    {
+        var vacancies = new List<HtmlNode?>();
+        var response = new List<VacancyResponse>();
+
+        while (!isFinish)
+        {
+            if (paginationButton is not null)
+            {
+                paginationButton.Click();
+
+                await Task.Delay(200);
+
+                var vacanciesPull = SetVacancies(driver);
+
+                if (vacanciesPull.Any())
+                    foreach (var item in vacanciesPull)
+                        vacancies.Add(item);
+
+                response = await FindVacancies(vacancies);
+            }
+            else
+                isFinish = true;
+        }
+
+        return response;
+    }
+
+    private async ValueTask<IWebDriver?> ActivateScrappingAsync(string path, string additionalPath)
     {
         var driver = await _activateDriver.ActivateScrapingDriver();
 
@@ -192,7 +182,7 @@ public class ScrapperService : IScrapperService
         return driver;
     }
 
-    private async ValueTask GoToUri(IWebDriver? driver, string uri)
+    private async ValueTask GoToUriAsync(IWebDriver? driver, string uri)
     {
         driver?.Navigate().GoToUrl(uri);
 

@@ -19,6 +19,10 @@ public static class XpathConsts
         public static string DjinniAdditionalVacancyName = "div[1]/div[2]/a[2]/span";
         public static string DjinniJobAdditionalInfo = "div[1]/div[1]/div[3]/div[2]/div/ul[1]/li[1]";
 
+        //DJINNI
+        public static string DjinniAdditionalInfo = "//*[@class='container job-post-page']/div[3]/div[2]/div/ul[1]";
+        public static string DjinniAdditionalSalary = "//*[@class='container job-post-page']/div[2]/div/div/div[3]/h1/span";
+
         // DOU
         public static string DouCurrentUri = "//*[@class='container job-post-page']/div[2]/div[1]/div[2]/a[2]";
         public static string DouAdditionalCurrentUri = "//*[@class='container job-post-page']/div[3]/div[1]/div[2]/a[2]";

@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
+using System.Reflection.Metadata;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Helpers;
 using Vacancies.Core.Responses;
@@ -52,14 +53,29 @@ public class ScrapperService : IScrapperService
     {
         var vacancyResponse = new List<VacancyResponse>();
         string coordinates = "";
+        var skills = new List<string>();
+        string salary = null;
 
         foreach (var vacancy in vacancies)
         {
             var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, ref XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
-            if (additionalDjinniPath != null)
+            if (additionalDjinniPath is not null)
             {
                 var driver = await ActivateScrappingAsync(VacanciesConsts.DjinniUrl, additionalDjinniPath);
+
+                var addtitionalDjiniInfoElements = driver.FindElements(By.XPath(XpathConsts.Xpath.DjinniAdditionalInfo))?
+                    .FirstOrDefault();
+
+                var skillsListElements = addtitionalDjiniInfoElements.FindElements(By.ClassName("job-additional-info--item")).ToList();
+
+                foreach(var skillElement in skillsListElements)
+                {
+                    var skill = skillElement.FindElements(By.ClassName("job-additional-info--item-text")).FirstOrDefault().GetAttribute("innerText");
+                    skills.Add(skill);
+                }
+
+                salary = driver.FindElements(By.XPath(XpathConsts.Xpath.DjinniAdditionalSalary))?.FirstOrDefault()?.GetAttribute("innerText");
 
                 var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouAdditionalCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind);
@@ -113,9 +129,9 @@ public class ScrapperService : IScrapperService
             var response = new VacancyResponse(
                 Guid.NewGuid(),
                 vacancyName,
-                new List<string>(),
+                skills,
                 coordinates,
-                null);
+                salary);
 
             vacancyResponse.Add(response);
         }

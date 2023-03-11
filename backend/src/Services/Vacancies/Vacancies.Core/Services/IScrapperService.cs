@@ -1,6 +1,5 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
-using System.Reflection.Metadata;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Helpers;
 using Vacancies.Core.Responses;
@@ -43,7 +42,7 @@ public class ScrapperService : IScrapperService
             return await FillVacanciesAsync(driver);
 
         var items = await FillVacanciesAsync(driver);
-        
+
         items = await FillWithPaginationAsync(driver, paginationButton);
 
         return items;
@@ -65,11 +64,7 @@ public class ScrapperService : IScrapperService
                 var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouAdditionalCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind);
 
-                if (douUri is null)
-                {
-                    driver.Quit();
-                    continue;
-                }
+                if (douUri is null) { driver.Quit(); continue; }
 
                 await GoToUriAsync(driver, douUri);
 
@@ -85,11 +80,7 @@ public class ScrapperService : IScrapperService
                     {
                         var currentOfficeUri = _elementFinder.FindSingleNodeByXpathAndElement(navNode, ref XpathConsts.ElementsToFind.ElementInnerTextToFind, XpathConsts.ElementsToFind.AttributeToFind);
 
-                        if (currentOfficeUri is null)
-                        {
-                            driver.Quit();
-                            continue;
-                        }
+                        if (currentOfficeUri is null) { driver.Quit(); continue; }
 
                         await GoToUriAsync(driver, currentOfficeUri);
 
@@ -166,7 +157,6 @@ public class ScrapperService : IScrapperService
             {
                 paginationButton.Click();
                 await Task.Delay(200);
-
 
                 paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
 

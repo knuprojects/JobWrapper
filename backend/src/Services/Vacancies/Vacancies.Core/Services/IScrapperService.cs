@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Primitives;
 using OpenQA.Selenium;
-using System.Reflection.Metadata;
+using System.Text;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Helpers;
 using Vacancies.Core.Responses;
@@ -37,7 +38,7 @@ public class ScrapperService : IScrapperService
 
     public async ValueTask<List<VacancyResponse>> ScrollVacancies(IWebDriver driver)
     {
-        var paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
+        var paginationButton = _elementFinder.FindElementsByXpath(driver, XpathConsts.Xpath.PaginationButton);
 
         if (paginationButton is null)
             return await FillVacanciesAsync(driver);
@@ -58,43 +59,44 @@ public class ScrapperService : IScrapperService
 
         foreach (var vacancy in vacancies)
         {
-            var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, ref XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
+            var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
             if (additionalDjinniPath is not null)
             {
                 var driver = await ActivateScrappingAsync(VacanciesConsts.DjinniUrl, additionalDjinniPath);
 
-                var addtitionalDjiniInfoElements = driver.FindElements(By.XPath(XpathConsts.Xpath.DjinniAdditionalInfo))?
-                    .FirstOrDefault();
+                var addtitionalDjiniInfoElements = _elementFinder.FindFirstElementByByDjinniAdditionalInfo(driver, XpathConsts.Xpath.DjinniAdditionalInfo);
 
-                var skillsListElements = addtitionalDjiniInfoElements.FindElements(By.ClassName("job-additional-info--item")).ToList();
-
-                foreach(var skillElement in skillsListElements)
-                {
-                    var skill = skillElement.FindElements(By.ClassName("job-additional-info--item-text")).FirstOrDefault().GetAttribute("innerText");
-                    skills.Add(skill);
-                }
-
-                salary = driver.FindElements(By.XPath(XpathConsts.Xpath.DjinniAdditionalSalary))?.FirstOrDefault()?.GetAttribute("innerText");
-
-                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
-                             _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouAdditionalCurrentUri, ref XpathConsts.ElementsToFind.AttributeToFind);
+                var douUri = _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouCurrentUri, XpathConsts.ElementsToFind.AttributeToFind) ??
+                             _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouAdditionalCurrentUri, XpathConsts.ElementsToFind.AttributeToFind);
 
                 if (douUri is null) { driver.Quit(); continue; }
 
+                var skillsListElements = _elementFinder.FindListOfElementsByByDjinniAdditionalInfo(addtitionalDjiniInfoElements, XpathConsts.Xpath.DjinniAdditionalInfoElement);
+
+                foreach (var skillElement in skillsListElements)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append(_elementFinder.FindElementByClassWithAttribute(skillElement, XpathConsts.Xpath.DjinniAdditionalInfoElementText, XpathConsts.Xpath.DjinniInnerText));
+                    skills.Add(sb.ToString());
+                }
+
+                salary = _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DjinniAdditionalSalary, XpathConsts.Xpath.DjinniInnerText);
+
+
                 await GoToUriAsync(driver, douUri);
 
-                var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouNavBlockUri, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+                var douDocument = _elementFinder.LoadHtmlByXpathAndAttribute(driver, XpathConsts.Xpath.DouNavBlockUri, XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
                 var douNavBlockElementsList = _elementFinder.FindChildNodesByElement(douDocument, XpathConsts.ElementsToFind.ListElementToFind);
 
                 foreach (var navNode in douNavBlockElementsList)
                 {
-                    var innerTextOfElementInNavBlock = _elementFinder.FindSingleNodeInnerTextByXpath(navNode, ref XpathConsts.ElementsToFind.ElementInnerTextToFind);
+                    var innerTextOfElementInNavBlock = _elementFinder.FindSingleNodeInnerTextByXpath(navNode, XpathConsts.ElementsToFind.ElementInnerTextToFind);
 
                     if (innerTextOfElementInNavBlock is "Офіси")
                     {
-                        var currentOfficeUri = _elementFinder.FindSingleNodeByXpathAndElement(navNode, ref XpathConsts.ElementsToFind.ElementInnerTextToFind, XpathConsts.ElementsToFind.AttributeToFind);
+                        var currentOfficeUri = _elementFinder.FindSingleNodeByXpathAndElement(navNode, XpathConsts.ElementsToFind.ElementInnerTextToFind, XpathConsts.ElementsToFind.AttributeToFind);
 
                         if (currentOfficeUri is null) { driver.Quit(); continue; }
 
@@ -104,8 +106,8 @@ public class ScrapperService : IScrapperService
                     }
                 }
 
-                var currentMapUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapDefaultUri, ref XpathConsts.ElementsToFind.AttributeToFind) ??
-                                    _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapAdditionalUri, ref XpathConsts.ElementsToFind.AttributeToFind);
+                var currentMapUri = _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouMapDefaultUri, XpathConsts.ElementsToFind.AttributeToFind) ??
+                                    _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouMapAdditionalUri, XpathConsts.ElementsToFind.AttributeToFind);
 
                 if (currentMapUri is null)
                 {
@@ -115,16 +117,16 @@ public class ScrapperService : IScrapperService
 
                 await GoToUriAsync(driver, currentMapUri);
 
-                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind) ??
-                              _elementFinder.FindElementsByXpathAndAttribute(driver, ref XpathConsts.Xpath.DouMapAdditionalMetaContent, ref XpathConsts.ElementsToFind.AttributeContentToFind);
+                var metaUri = _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouMapMetaContent, XpathConsts.ElementsToFind.AttributeContentToFind) ??
+                              _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DouMapAdditionalMetaContent, XpathConsts.ElementsToFind.AttributeContentToFind);
 
                 coordinates = SplitUri(ref metaUri);
 
                 driver.Quit();
             }
 
-            var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniVacancyName) ??
-                              _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, ref XpathConsts.Xpath.DjinniAdditionalVacancyName);
+            var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniVacancyName) ??
+                              _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniAdditionalVacancyName);
 
             var response = new VacancyResponse(
                 Guid.NewGuid(),
@@ -141,7 +143,7 @@ public class ScrapperService : IScrapperService
 
     private List<HtmlNode?> ReloadDocument(IWebDriver driver)
     {
-        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, XpathConsts.Xpath.HtmlDoc, XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
         var items = _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
 
@@ -150,7 +152,7 @@ public class ScrapperService : IScrapperService
 
     private List<HtmlNode?> SetVacancies(IWebDriver driver)
     {
-        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, ref XpathConsts.Xpath.HtmlDoc, ref XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
+        var document = _elementFinder.LoadHtmlByXpathAndAttribute(driver, XpathConsts.Xpath.HtmlDoc, XpathConsts.ElementsToFind.HtmlDocAttributeToFind);
 
         return _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
     }
@@ -174,7 +176,7 @@ public class ScrapperService : IScrapperService
                 paginationButton.Click();
                 await Task.Delay(200);
 
-                paginationButton = _elementFinder.FindElementsByXpath(driver, ref XpathConsts.Xpath.PaginationButton);
+                paginationButton = _elementFinder.FindElementsByXpath(driver, XpathConsts.Xpath.PaginationButton);
 
                 var items = ReloadDocument(driver);
 

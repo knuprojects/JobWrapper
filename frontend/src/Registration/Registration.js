@@ -10,22 +10,23 @@ function Registration() {
                 </Link>
                 <div className={style.registration}>
                     <ul>
-                        <li>
+                        <li className="mt-20">
                             <input className={style.input} placeholder="Username" /> 
                         </li>
-                        <li>
+                        <li className="mt-20">
                             <input className={style.input} placeholder="Email" />
                         </li>
-                        <li>
+                        <li className="mt-20">
                             <input className={style.input} placeholder="Password" type='password' />
                         </li>
-                        <li>
+                        <li className="mt-20">
                             <input className={style.input} placeholder="Confirm password" type='password'/>
                         </li>
                         <li className="mt-40">
                             <button className={style.button}>Submit</button>
                         </li>
                     </ul>
+                    <img className={style.img} src='/img/OrgCoral_Ofc-02_Concept-04.jpg' alt='picture' />
                 </div>
                 <label className={style.subscribe}>
                     Send email about new vacancies which you interested i, if it possible

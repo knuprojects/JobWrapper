@@ -10,29 +10,31 @@ function LogIn() {
             <div className={styles.wrapper}>
                 <div className={styles.login} >
                     <div className={styles.inputs}>
-                        <h4>Log In</h4>
+                        <h4>Sign In</h4>
                         <ul>
-                            <li className={styles}>
+                            <li>
                                 <input className={styles.input} placeholder="Username" />
                             </li>
                             <li className="mt-20">
                                 <input className={styles.input} placeholder="password" type='password' />
                             </li>
-                            <li className="mt-40">
-                                <button className={styles.button}>Submit</button>
-                            </li>
+                            <div className={styles.container}>
+                                <li className="mt-30">
+                                    <button className={styles.button}>Submit</button>
+                                </li>
+                            </div>
+
                             <li>
-                                <Link to='/registration'>
-                                    <p className={styles.link}>Didn't have an account?</p>
-                                </Link>
+                                <div className={styles.registration}>
+                                    <p>Didn't have an account?</p>
+                                    <Link to='/registration'> <p className={styles.link}>Sign-up</p></Link>
+                                </div>
                             </li>
                         </ul>
                     </div>
-                    <img width={50} height={50} className={styles.img} src='/img/logInCat.png' alt='picture' />
+                    <img className={styles.img} src='/img/OrgCoral_Ofc-02_Concept-04.jpg' alt='picture' />
                 </div>
-
             </div>
-
         </div>
     )
 }

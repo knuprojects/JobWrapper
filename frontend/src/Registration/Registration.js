@@ -28,11 +28,6 @@ function Registration() {
                     </ul>
                     <img className={style.img} src='/img/OrgCoral_Ofc-02_Concept-04.jpg' alt='picture' />
                 </div>
-                <label className={style.subscribe}>
-                    Send email about new vacancies which you interested i, if it possible
-                    <input type="checkbox" />
-                    <span class="checkmark" />
-                </label>
             </div>
         </div>
     )

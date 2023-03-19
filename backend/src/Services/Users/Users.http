@@ -1,4 +1,5 @@
 @url = http://localhost:5010/api
+@accessToken = test
 
 @userGid = test
 @access-token = test
@@ -22,4 +23,22 @@ Content-Type: application/json
 {
     "userName" : "sashaTkachuk",
     "password" : "Password1"
+}
+
+###
+PATCH  {{url}}/revoke-token
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "userGid" : "{{userGid}}"
+}
+
+###
+PATCH  {{url}}/email-confirmation
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "token" : ""
 }

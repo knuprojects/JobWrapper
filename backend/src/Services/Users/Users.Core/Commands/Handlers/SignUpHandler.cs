@@ -1,8 +1,7 @@
-﻿using JobWrapper.Messages.Users;
-using Mediator;
+﻿using Mediator;
 using Shared.Dal.Repositories;
 using Shared.Dal.Utils;
-using Shared.Messaging.Brokers;
+using Shared.Messaging;
 using Shared.Security.Cryptography;
 using Users.Core.Entities;
 
@@ -11,18 +10,15 @@ namespace Users.Core.Commands.Handlers;
 public class SignUpHandler : ICommandHandler<SignUp>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMessageBroker _messageBroker;
     private readonly IBaseRepository _baseRepository;
     private readonly IPasswordManager _passwordManager;
 
     public SignUpHandler(
         IUnitOfWork unitOfWork,
-        IMessageBroker messageBroker,
         IBaseRepository baseRepository,
         IPasswordManager passwordManager)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _messageBroker = messageBroker ?? throw new ArgumentNullException(nameof(messageBroker));
         _baseRepository = baseRepository ?? throw new ArgumentNullException(nameof(baseRepository));
         _passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
     }
@@ -48,15 +44,7 @@ public class SignUpHandler : ICommandHandler<SignUp>
 
         _baseRepository.Add(user);
 
-        var confirmationToken = UserToken.Init(Guid.NewGuid().ToString("N"), user.Gid);
-
-        _baseRepository.Add(confirmationToken);
-
-        var message = new SignedUp(user.Gid, user.Email, confirmationToken.ConfirmationToken);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken, message);
-
-        await _messageBroker.PublishAsync(message, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken, new EmptyMessage());
 
         return Unit.Value;
     }

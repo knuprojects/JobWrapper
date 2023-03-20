@@ -1,5 +1,4 @@
 ﻿using Mediator;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Users.Core.Commands;
 using Users.Core.Helpers;
@@ -47,13 +46,5 @@ namespace Users.Presentation.Controllers
 
             return Ok(jwt);
         }
-
-        [AllowAnonymous]
-        [HttpPost("email-confirmation")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesDefaultResponseType]
-        public async ValueTask<IActionResult> EmailConfirmation([FromBody] EmailCofirmation command, CancellationToken cancellationToken)
-        => Ok(await _mediator.Send(command, cancellationToken));
     }
 }

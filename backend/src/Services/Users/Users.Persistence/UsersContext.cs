@@ -7,7 +7,6 @@ namespace Users.Persistence;
 public class UsersContext : DbContext
 {
     public DbSet<User>? Users { get; set; }
-    public DbSet<UserToken>? UserTokens { get; set; }
     public DbSet<Role>? Roles { get; set; }
     public DbSet<OutboxMessage> Outbox { get; set; } = null!;
 

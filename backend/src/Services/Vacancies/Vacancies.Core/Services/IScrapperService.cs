@@ -54,11 +54,12 @@ public class ScrapperService : IScrapperService
     {
         var vacancyResponse = new List<VacancyResponse>();
         string coordinates = "";
-        var skills = new List<string>();
         string salary = null;
 
         foreach (var vacancy in vacancies)
         {
+
+            var skills = new List<string>();
             var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
             if (additionalDjinniPath is not null)
@@ -74,9 +75,10 @@ public class ScrapperService : IScrapperService
 
                 var skillsListElements = _elementFinder.FindListOfElementsByByDjinniAdditionalInfo(addtitionalDjiniInfoElements, XpathConsts.Xpath.DjinniAdditionalInfoElement);
 
+
+                StringBuilder sb = new StringBuilder();
                 foreach (var skillElement in skillsListElements)
                 {
-                    StringBuilder sb = new StringBuilder();
                     sb.Append(_elementFinder.FindElementByClassWithAttribute(skillElement, XpathConsts.Xpath.DjinniAdditionalInfoElementText, XpathConsts.Xpath.DjinniInnerText));
                     skills.Add(sb.ToString());
                 }

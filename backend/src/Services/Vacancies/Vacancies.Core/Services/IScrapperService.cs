@@ -76,11 +76,10 @@ public class ScrapperService : IScrapperService
                 var skillsListElements = _elementFinder.FindListOfElementsByByDjinniAdditionalInfo(addtitionalDjiniInfoElements, XpathConsts.Xpath.DjinniAdditionalInfoElement);
 
 
-                StringBuilder sb = new StringBuilder();
                 foreach (var skillElement in skillsListElements)
                 {
-                    sb.Append(_elementFinder.FindElementByClassWithAttribute(skillElement, XpathConsts.Xpath.DjinniAdditionalInfoElementText, XpathConsts.Xpath.DjinniInnerText));
-                    skills.Add(sb.ToString());
+                    var skill = _elementFinder.FindElementByClassWithAttribute(skillElement, XpathConsts.Xpath.DjinniAdditionalInfoElementText, XpathConsts.Xpath.DjinniInnerText);
+                    skills.Add(skill.ToString());
                 }
 
                 salary = _elementFinder.FindElementsByXpathAndAttribute(driver, XpathConsts.Xpath.DjinniAdditionalSalary, XpathConsts.Xpath.DjinniInnerText);

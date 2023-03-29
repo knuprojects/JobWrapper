@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Login from './LogIn/Login'
 import Registration from './Registration/Registration';
 import {ToastContainer, toast } from "react-toastify";
+import Main from './MainPage/Main';
 function App() {
   return (
     <div className="App">
@@ -11,6 +12,7 @@ function App() {
         <Route path="/registration" exact
           element={<Registration />}>
         </Route>
+        <Route path = '/main' exact element = {<Main/>} />
       </Routes>
     </div>
   );

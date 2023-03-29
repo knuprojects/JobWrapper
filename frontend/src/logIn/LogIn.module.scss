@@ -60,13 +60,12 @@ h4 {
 }
 
 .button:hover {
-   color: lighten($color: #c5e3ba, $amount: 5)
+   color: lighten($color: #f5f9f3, $amount: 5)
 }
 
 .button:active {
-   color: darken($color: #9dd588, $amount: 5)
+   color: darken($color: #f5f9f3, $amount: 5)
 }
-
 .registration {
    font-size: 15px;
    margin-top: 1rem;

@@ -1,15 +1,20 @@
 ﻿using Shared.Abstractions.Attributes;
+using Shared.Abstractions.Primitives;
 using Shared.Abstractions.Primitives.Mongo;
 
 namespace Vacancies.Core.Entities;
 
-[BsonCollection("Vacancy")]
-public class Vacancy : BaseDocument
+public class Vacancy : Entity
 {
+    public Vacancy(string name, List<string> skills, string location, string salary): base()
+    {
+        Name = name;
+        Skills = skills;
+        Location = location;
+        Salary = salary;
+    }
     public string Name { get; set; }
     public List<string> Skills { get; set; }
-    public string EnglishLvl { get; set; }
     public string Location { get; set; }
     public string Salary { get; set; }
-    public string RequestUri { get; set; }
 }

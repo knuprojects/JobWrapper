@@ -1,8 +1,8 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Primitives;
+using Mapster;
 using OpenQA.Selenium;
-using System.Text;
 using Vacancies.Core.Consts;
+using Vacancies.Core.Entities;
 using Vacancies.Core.Helpers;
 using Vacancies.Core.Responses;
 
@@ -21,7 +21,8 @@ public class ScrapperService : IScrapperService
 
     public ScrapperService(
         IActivateDriver activateDriver,
-        IElementFinder elementFinder)
+        IElementFinder elementFinder
+        )
     {
         _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
         _elementFinder = elementFinder ?? throw new ArgumentNullException(nameof(elementFinder));
@@ -53,6 +54,7 @@ public class ScrapperService : IScrapperService
     private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
     {
         var vacancyResponse = new List<VacancyResponse>();
+        var vacanciesResponse = new List<Vacancy>();
         string coordinates = "";
         string salary = null;
 
@@ -134,11 +136,13 @@ public class ScrapperService : IScrapperService
                 vacancyName,
                 skills,
                 coordinates,
-                salary);
+                salary
+                );
 
             vacancyResponse.Add(response);
-        }
 
+        }
+        vacanciesResponse.Adapt(vacancyResponse);
         return vacancyResponse;
     }
 

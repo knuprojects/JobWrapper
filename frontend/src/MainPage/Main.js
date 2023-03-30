@@ -1,10 +1,12 @@
 import React, { useState }  from 'react'
 import Header from './Header';
+import styles from './Main.module.scss';
+
 function Main() {
    
     return (
         <div>
-            <header className='d-flex'>
+            <header className= {styles.header}>
                 <Header/>
             </header>
             <nav>

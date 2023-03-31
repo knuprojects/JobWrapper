@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Entities;
 using Vacancies.Core.Helpers;
+using Vacancies.Core.Repositories;
 using Vacancies.Core.Responses;
 
 namespace Vacancies.Core.Services;
@@ -18,14 +19,17 @@ public class ScrapperService : IScrapperService
     private bool isFinish = false;
     private readonly IActivateDriver _activateDriver;
     private readonly IElementFinder _elementFinder;
+    private readonly IVacancyRepository _repository;
 
     public ScrapperService(
         IActivateDriver activateDriver,
-        IElementFinder elementFinder
+        IElementFinder elementFinder,
+        IVacancyRepository repository
         )
     {
         _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
         _elementFinder = elementFinder ?? throw new ArgumentNullException(nameof(elementFinder));
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     public async ValueTask<List<VacancyResponse>> ScrapVacanciesByUrl(string path, IWebDriver driver)
@@ -143,6 +147,7 @@ public class ScrapperService : IScrapperService
 
         }
         vacanciesResponse.Adapt(vacancyResponse);
+        _repository.AddManyVacancies(vacanciesResponse);
         return vacancyResponse;
     }
 

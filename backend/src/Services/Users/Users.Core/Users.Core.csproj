@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\External\JobWrapper.Messages\JobWrapper.Messages.csproj" />
     <ProjectReference Include="..\..\..\SharedKernel\Shared.Api\Shared.Api.csproj" />
     <ProjectReference Include="..\..\..\SharedKernel\Shared\Shared.csproj" />
   </ItemGroup>

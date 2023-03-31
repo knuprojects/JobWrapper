@@ -11,19 +11,16 @@ public class User : Entity
         UserName? userName,
         Email? email,
         string password,
-        bool isNotificationNeeded,
         Guid roleGid) : base()
     {
         UserName = userName;
         Email = email;
         Password = password;
-        IsNotificationNeeded = isNotificationNeeded;
         RoleGid = roleGid;
     }
     public UserName? UserName { get; private set; }
     public Email? Email { get; private set; }
     public string Password { get; private set; } = null!;
-    public bool IsNotificationNeeded { get; set; }
     public Guid RoleGid { get; private set; }
 
     public Role? Role { get; set; }
@@ -34,8 +31,7 @@ public class User : Entity
         string password,
         Role? validRole,
         bool? isUserNameUnique,
-        bool? isEmailUnique,
-        bool isNotificationNeeded)
+        bool? isEmailUnique)
     {
         if (!isUserNameUnique.GetValueOrDefault())
             throw new BaseException(ExceptionCodes.ValueAlreadyExist,
@@ -51,7 +47,6 @@ public class User : Entity
         var user = new User(userName,
                             email,
                             password,
-                            isNotificationNeeded,
                             validRole.Gid);
 
         return user;

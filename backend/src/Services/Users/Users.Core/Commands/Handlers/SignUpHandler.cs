@@ -38,8 +38,7 @@ public class SignUpHandler : ICommandHandler<SignUp>
                              securePassword,
                              validRole,
                              isUserNameUnique,
-                             isEmailUnique,
-                             command.IsNotificationsNeeded);
+                             isEmailUnique);
 
         _baseRepository.Add(user);
 

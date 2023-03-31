@@ -12,7 +12,6 @@ Content-Type: application/json
     "userName" : "sashaTkachuk",
     "email" : "sashatkachuk09@ukr.net",
     "password" : "Password1",
-    "IsNotificationsNeeded" : true,
     "roleGid" : null
 }
 

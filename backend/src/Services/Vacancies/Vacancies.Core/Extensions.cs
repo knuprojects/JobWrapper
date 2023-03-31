@@ -10,11 +10,18 @@ namespace Vacancies.Core;
 public static class Extensions
 {
     public static IServiceCollection AddCore(this IServiceCollection services)
-        => services
-                //.AddSingleton<IWebDriver>()
-                .AddSingleton<IElementFinder, ElementFinder>()
-                .AddScoped<IActivateDriver, ActivateDriver>()
-                .AddScoped<IScrapperService, ScrapperService>();
+    {
+        services.AddSingleton<IElementFinder, ElementFinder>();
+        services.AddScoped<IActivateDriver, ActivateDriver>();
+        services.AddScoped<IScrapperService, ScrapperService>();
+
+        services.AddMediator(options =>
+        {
+            options.ServiceLifetime = ServiceLifetime.Scoped;
+        });
+
+        return services;
+    }
 
     private static TypeAdapterConfig GetConfigureMappingConfig()
     {

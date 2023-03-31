@@ -4,8 +4,7 @@
     "Vacancies.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchBrowser": false,
       "applicationUrl": "https://localhost:6020",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

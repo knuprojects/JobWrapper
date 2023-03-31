@@ -13,10 +13,10 @@
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedKernel\Shared\Shared.csproj" />
     <ProjectReference Include="..\Vacancies.Core\Vacancies.Core.csproj" />
     <ProjectReference Include="..\Vacancies.Persistence\Vacancies.Persistence.csproj" />
   </ItemGroup>

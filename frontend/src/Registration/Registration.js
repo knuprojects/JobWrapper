@@ -1,27 +1,55 @@
 import style from './Registration.module.scss'
-import {  Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useState } from "react"
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Registration() {
-    const prevDef = (e) =>{
+    const prevDef = (e) => {
         e.preventDefault();
-        if(checkOut()){
-            console.log('yep');
+        if (checkOut()){
+            fetch('http://localhost:5010/api/sign-up', {
+                method: 'POST', body: JSON.stringify(
+                    { userName, email, password })
+            })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch(e => console.log(e));
         }
+       
     }
-    
-    const checkOut = () =>{
-        if (userName === '' || userName === null ){
+    function getUserName(event) {
+        setUserName(event.target.value);
+    }
+
+    function getPassword(event) {
+        setPassword(event.target.value);
+    }
+
+    function getEmail(event) {
+        setEmail(event.target.value);
+    }
+    function getConfirmPassword(event){
+        setconfirmPassword(event.target.value);
+    }
+
+    const checkOut = () => {
+        let check = true;
+        if (userName === '' || userName === null) {
+            check = false;
             toast.warning('Enter something in username');
         }
-        if (password === '' || password === null){
+        if (password === '' || password === null) {
+            check = false;
             toast.warning('Enter something in password');
         }
-        if ( confirmPassword ===  password || confirmPassword === null){
+        if (confirmPassword !== password || confirmPassword === null) {
+            check = false;
             toast.warning('Passwords do not match');
         }
+        return check;
     }
+
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
@@ -36,26 +64,40 @@ function Registration() {
                     <form onSubmit={prevDef}>
                         <ul>
                             <li className="mt-20">
-                                <input value={userName} className={style.input} placeholder="Username" />
+                                <input value={userName}
+                                    className={style.input}
+                                    onChange={getUserName}
+                                    placeholder="Username" />
                             </li>
                             <li className="mt-20">
-                                <input value={email} className={style.input} placeholder="Email" />
+                                <input value={email}
+                                    className={style.input}
+                                    onChange={getEmail}
+                                    placeholder="Email" />
                             </li>
                             <li className="mt-20">
-                                <input value = {password} className={style.input} placeholder="Password" type='password' />
+                                <input value={password}
+                                    className={style.input}
+                                    placeholder="Password"
+                                    onChange={getPassword}
+                                    type='password' />
                             </li>
                             <li className="mt-20">
-                                <input value = {confirmPassword} className={style.input} placeholder="Confirm password" type='password' />
+                                <input value={confirmPassword} 
+                                onChange={getConfirmPassword}
+                                className={style.input}
+                                 placeholder="Confirm password"
+                                  type='password' />
                             </li>
                             <li className="mt-40">
-                                <button className={style.button}>Submit</button>
+                                <button onClick={checkOut} className={style.button}>Submit</button>
                             </li>
                         </ul>
                     </form>
                     <img className={style.img} src='/img/OrgCoral_Ofc-02_Concept-04.jpg' alt='picture' />
                 </div>
             </div>
-            <ToastContainer autoClose={4000} position='top-center'/>
+            <ToastContainer autoClose={4000} position='top-center' />
         </div>
     )
 }

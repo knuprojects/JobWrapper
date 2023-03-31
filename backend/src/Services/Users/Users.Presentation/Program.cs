@@ -1,3 +1,6 @@
+using Shared;
+using Users.Presentation.Infrastructure;
+
 var builder = WebApplication
     .CreateBuilder(args)
     .AddShared();

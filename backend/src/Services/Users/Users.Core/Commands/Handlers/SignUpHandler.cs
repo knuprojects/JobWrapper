@@ -1,7 +1,6 @@
 ﻿using Mediator;
 using Shared.Dal.Repositories;
 using Shared.Dal.Utils;
-using Shared.Messaging;
 using Shared.Security.Cryptography;
 using Users.Core.Entities;
 
@@ -44,7 +43,7 @@ public class SignUpHandler : ICommandHandler<SignUp>
 
         _baseRepository.Add(user);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken, new EmptyMessage());
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

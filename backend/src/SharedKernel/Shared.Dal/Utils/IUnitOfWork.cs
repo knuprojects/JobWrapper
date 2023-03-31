@@ -1,31 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Shared.Abstractions.Primitives;
-using Shared.Dal.Outbox;
-using Shared.Messaging;
 
 namespace Shared.Dal.Utils;
 
 public interface IUnitOfWork
 {
-    Task SaveChangesAsync(CancellationToken cancellationToken, IMessage message);
+    Task SaveChangesAsync(CancellationToken cancellationToken);
 }
 
 public class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
 {
     private readonly TContext _dbContext;
-    private DbSet<OutboxMessage> _outbox;
+
     public UnitOfWork(
         TContext dbContext)
     {
         _dbContext = dbContext;
-        _outbox = dbContext.Set<OutboxMessage>();
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken, IMessage message)
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         UpdateAuditableEntities();
-        OutboxMessageProcessing(message);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -45,25 +40,5 @@ public class UnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
                 entry.Property(a => a.LastModified)
                     .CurrentValue = DateTime.UtcNow;
         }
-    }
-
-    private void OutboxMessageProcessing(IMessage message)
-    {
-        if (message is EmptyMessage)
-            return;
-
-        var outboxMessage = new OutboxMessage
-        {
-            Type = message.GetType().ToString(),
-            OccuredAt = DateTimeOffset.UtcNow,
-            Content = JsonConvert.SerializeObject(
-                message,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                })
-        };
-
-        _outbox.Add(outboxMessage);
     }
 }

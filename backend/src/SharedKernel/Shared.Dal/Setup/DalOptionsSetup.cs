@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-
-namespace Shared.Dal.Setup;
+﻿namespace Shared.Dal.Setup;
 
 public static class BaseOptionsSetup
 {
@@ -32,4 +29,45 @@ internal sealed class DalOptionsPostgresSetup : IConfigureOptions<PostgresOption
 }
 
 
+
+private readonly IConfiguration _configuration;
+
+public DalRedisOptionsSetup(IConfiguration configuration)
+{
+    _configuration = configuration;
+}
+
+public void Configure(RedisOptions options)
+{
+    if (options is not null)
+    {
+        var connectionString = _configuration.GetConnectionString("redisConnection");
+
+        if (!string.IsNullOrWhiteSpace(connectionString))
+            options.RedisConnection = connectionString;
+
+        _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionRedisName).Bind(options);
+    }
+}
+}
+
+
+    public DalRedisOptionsSetup(IConfiguration configuration)
+{
+    _configuration = configuration;
+}
+
+public void Configure(RedisOptions options)
+{
+    if (options is not null)
+    {
+        var connectionString = _configuration.GetConnectionString("redisConnection");
+
+        if (!string.IsNullOrWhiteSpace(connectionString))
+            options.RedisConnection = connectionString;
+
+        _configuration.GetSection(BaseOptionsSetup.ConfigurationSectionRedisName).Bind(options);
+    }
+}
+}
 

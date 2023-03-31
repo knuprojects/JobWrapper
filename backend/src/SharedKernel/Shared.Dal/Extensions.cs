@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Shared.Dal.Initializers;
+using Shared.Dal.Repositories;
 using Shared.Dal.Setup;
 using Shared.Dal.Utils;
 
@@ -26,6 +27,7 @@ public static class Extensions
         services.AddHostedService<DatabaseInitializer<TContext>>();
         services.AddHostedService<DataInitializer>();
 
+        services.AddScoped<IBaseRepository, BaseRepository<TContext>>();
         services.AddScoped<IUnitOfWork, UnitOfWork<TContext>>();
 
         return services;

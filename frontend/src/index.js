@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import 'macro-css';
 import './index.css';
 import App from './App';
+import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter } from 'react-router-dom';
 
 
@@ -11,8 +12,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <App />
-    </BrowserRouter>
-    
+    </BrowserRouter>    
   </React.StrictMode>
 );
 

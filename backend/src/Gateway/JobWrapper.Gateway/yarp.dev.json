@@ -22,24 +22,13 @@
             "pathPattern": "{**catchall}"
           }
         ]
-      },
-      "notifications": {
-        "clusterId": "notifications",
-        "match": {
-          "path": "notifications-service/{**catchall}"
-        },
-        "transforms": [
-          {
-            "pathPattern": "{**catchall}"
-          }
-        ]
       }
     },
     "clusters": {
       "users": {
         "destinations": {
           "destination": {
-            "address": "https://localhost:6010"
+            "address": "http://localhost:6010"
           }
         }
       },
@@ -47,13 +36,6 @@
         "destinations": {
           "destination": {
             "address": "http://localhost:6020"
-          }
-        }
-      },
-      "notifications": {
-        "destinations": {
-          "destination1": {
-            "address": "http://localhost:6030"
           }
         }
       }

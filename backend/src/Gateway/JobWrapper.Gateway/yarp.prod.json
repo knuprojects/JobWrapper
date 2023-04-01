@@ -22,17 +22,6 @@
             "pathPattern": "{**catchall}"
           }
         ]
-      },
-      "notifications": {
-        "clusterId": "notifications",
-        "match": {
-          "path": "notifications-service/{**catchall}"
-        },
-        "transforms": [
-          {
-            "pathPattern": "{**catchall}"
-          }
-        ]
       }
     },
     "clusters": {
@@ -47,13 +36,6 @@
         "destinations": {
           "destination": {
             "address": "https://vacancies-service"
-          }
-        }
-      },
-      "notifications": {
-        "destinations": {
-          "destination1": {
-            "address": "https://notifications-service"
           }
         }
       }

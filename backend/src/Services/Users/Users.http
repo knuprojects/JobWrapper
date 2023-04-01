@@ -32,12 +32,3 @@ Authorization: Bearer {{accessToken}}
 {
     "userGid" : "{{userGid}}"
 }
-
-###
-PATCH  {{url}}/email-confirmation
-Content-Type: application/json
-Authorization: Bearer {{accessToken}}
-
-{
-    "token" : ""
-}

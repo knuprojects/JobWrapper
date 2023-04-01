@@ -56,7 +56,7 @@ public class SignUpHandler : ICommandHandler<SignUp>
         var jwt = _jwtProvider.CreateToken(
            user.Gid.ToString(),
            user.Email.Value,
-           user.Name,
+           user.UserName,
            null);
 
         var jwtDto = new JwtDto(user.Gid, jwt.AccessToken, jwt.Expires);

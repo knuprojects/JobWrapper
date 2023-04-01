@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared.Abstractions\Shared.Abstractions.csproj" />
-    <ProjectReference Include="..\Shared.Messaging\Shared.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,8 @@ namespace Vacancies.Persistence
     public static class Extensions
     {
         public static IServiceCollection AddPersistence(this IServiceCollection services)
-      => services
-               .AddScoped<IVacancyRepository, VacancyRepository>().AddPostgresDatabase<VacancyContext>();
+           => services
+               .AddScoped<IVacancyRepository, VacancyRepository>()
+               .AddPostgresDatabase<VacancyContext>();
     }
 }

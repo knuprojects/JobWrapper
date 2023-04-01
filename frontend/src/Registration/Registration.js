@@ -10,7 +10,8 @@ function Registration() {
             const formData = {
                 userName: userName,
                 password: password,
-                email: email
+                email: email,
+                roleGid: null
             };
             fetch('http://localhost:5010/api/sign-up', {
                 method: 'POST',
@@ -23,8 +24,7 @@ function Registration() {
                 console.log(response);
             })
             .catch(e => console.log(e));
-        }
-        
+        }       
 
     }
     function getUserName(event) {

@@ -20,7 +20,6 @@
     <ProjectReference Include="..\Shared.Contexts\Shared.Contexts.csproj" />
     <ProjectReference Include="..\Shared.Dal\Shared.Dal.csproj" />
     <ProjectReference Include="..\Shared.Http\Shared.Http.csproj" />
-    <ProjectReference Include="..\Shared.Messaging\Shared.Messaging.csproj" />
     <ProjectReference Include="..\Shared.Observability\Shared.Observability.csproj" />
     <ProjectReference Include="..\Shared.Security\Shared.Security.csproj" />
   </ItemGroup>

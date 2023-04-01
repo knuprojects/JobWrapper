@@ -6,17 +6,26 @@ import 'react-toastify/dist/ReactToastify.css';
 function Registration() {
     const prevDef = (e) => {
         e.preventDefault();
-        if (checkOut()){
+        if (checkOut()) {
+            const formData = {
+                userName: userName,
+                password: password,
+                email: email
+            };
             fetch('http://localhost:5010/api/sign-up', {
-                method: 'POST', body: JSON.stringify(
-                    { userName, email, password })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
             })
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch(e => console.log(e));
+            .then((response) => {
+                console.log(response);
+            })
+            .catch(e => console.log(e));
         }
-       
+        
+
     }
     function getUserName(event) {
         setUserName(event.target.value);
@@ -29,7 +38,7 @@ function Registration() {
     function getEmail(event) {
         setEmail(event.target.value);
     }
-    function getConfirmPassword(event){
+    function getConfirmPassword(event) {
         setconfirmPassword(event.target.value);
     }
 
@@ -83,11 +92,11 @@ function Registration() {
                                     type='password' />
                             </li>
                             <li className="mt-20">
-                                <input value={confirmPassword} 
-                                onChange={getConfirmPassword}
-                                className={style.input}
-                                 placeholder="Confirm password"
-                                  type='password' />
+                                <input value={confirmPassword}
+                                    onChange={getConfirmPassword}
+                                    className={style.input}
+                                    placeholder="Confirm password"
+                                    type='password' />
                             </li>
                             <li className="mt-40">
                                 <button onClick={checkOut} className={style.button}>Submit</button>

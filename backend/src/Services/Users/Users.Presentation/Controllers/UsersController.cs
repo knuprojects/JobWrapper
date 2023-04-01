@@ -19,7 +19,13 @@ namespace Users.Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async ValueTask<IActionResult> SignUp([FromBody] SignUp command)
-            => Ok(await _mediator.Send(command));
+        {
+            await _mediator.Send(command);
+
+            var jwt = _tokenStorage.Get();
+
+            return Ok(jwt);
+        }
 
         [HttpPost("sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]

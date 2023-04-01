@@ -2,7 +2,10 @@
 using Shared.Dal.Repositories;
 using Shared.Dal.Utils;
 using Shared.Security.Cryptography;
+using Shared.Security.Providers;
+using Users.Core.Dto;
 using Users.Core.Entities;
+using Users.Core.Helpers;
 
 namespace Users.Core.Commands.Handlers;
 
@@ -11,15 +14,21 @@ public class SignUpHandler : ICommandHandler<SignUp>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBaseRepository _baseRepository;
     private readonly IPasswordManager _passwordManager;
+    private readonly IJwtProvider _jwtProvider;
+    private readonly ITokenStorage _tokenStorage;
 
     public SignUpHandler(
         IUnitOfWork unitOfWork,
         IBaseRepository baseRepository,
-        IPasswordManager passwordManager)
+        IPasswordManager passwordManager,
+        IJwtProvider jwtProvider,
+        ITokenStorage tokenStorage)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _baseRepository = baseRepository ?? throw new ArgumentNullException(nameof(baseRepository));
         _passwordManager = passwordManager ?? throw new ArgumentNullException(nameof(passwordManager));
+        _jwtProvider = jwtProvider ?? throw new ArgumentNullException(nameof(jwtProvider));
+        _tokenStorage = tokenStorage ?? throw new ArgumentNullException(nameof(tokenStorage));
     }
 
     public async ValueTask<Unit> Handle(SignUp command, CancellationToken cancellationToken)
@@ -38,12 +47,21 @@ public class SignUpHandler : ICommandHandler<SignUp>
                              securePassword,
                              validRole,
                              isUserNameUnique,
-                             isEmailUnique,
-                             command.IsNotificationsNeeded);
+                             isEmailUnique);
 
         _baseRepository.Add(user);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var jwt = _jwtProvider.CreateToken(
+           user.Gid.ToString(),
+           user.Email.Value,
+           user.Name,
+           null);
+
+        var jwtDto = new JwtDto(user.Gid, jwt.AccessToken, jwt.Expires);
+
+        _tokenStorage.Set(jwtDto);
 
         return Unit.Value;
     }

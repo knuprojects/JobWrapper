@@ -8,13 +8,12 @@ using Shared.Contexts;
 using Shared.Http;
 using Shared.Observability.Logging;
 using Shared.Security;
-using System.Reflection;
 
 namespace Shared;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddShared(this WebApplicationBuilder builder, Assembly assemblies)
+    public static WebApplicationBuilder AddShared(this WebApplicationBuilder builder)
     {
         var appOptions = builder.Configuration.GetSection("app").BindOptions<AppOptions>();
         var appInfo = new AppInfo(appOptions.Name, appOptions.Version);
@@ -48,6 +47,7 @@ public static class Extensions
            .UseAuthentication()
            .UseRouting()
            .UseAuthorization()
+           .UseResponseCaching()
            .UseContexts();
 
         return app;

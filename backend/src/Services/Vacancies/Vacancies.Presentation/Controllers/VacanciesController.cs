@@ -10,6 +10,7 @@ namespace Vacancies.Presentation.Controllers;
 [Authorize]
 [Route("api/vacancies")]
 [ApiController]
+[ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "latest" })]
 public class VacanciesController : ControllerBase
 {
     private readonly IBaseRepository _repository;

@@ -48,7 +48,8 @@ public static class Extensions
            .UseRouting()
            .UseAuthorization()
            .UseResponseCaching()
-           .UseContexts();
+           .UseContexts()
+           .UseResponseCaching();
 
         return app;
     }

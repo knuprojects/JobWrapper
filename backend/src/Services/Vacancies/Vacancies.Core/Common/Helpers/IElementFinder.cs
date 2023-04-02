@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using Vacancies.Core.Consts;
 
-namespace Vacancies.Core.Helpers;
+namespace Vacancies.Core.Common.Helpers;
 
 public interface IElementFinder
 {

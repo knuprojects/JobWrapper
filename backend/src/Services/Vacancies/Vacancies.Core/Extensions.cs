@@ -1,8 +1,8 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
-using Vacancies.Core.Helpers;
-using Vacancies.Core.Mapper;
+using Vacancies.Core.Common.Helpers;
+using Vacancies.Core.Common.Mapper;
 using Vacancies.Core.Services;
 
 namespace Vacancies.Core;
@@ -14,11 +14,6 @@ public static class Extensions
         services.AddSingleton<IElementFinder, ElementFinder>();
         services.AddScoped<IActivateDriver, ActivateDriver>();
         services.AddScoped<IScrapperService, ScrapperService>();
-
-        services.AddMediator(options =>
-        {
-            options.ServiceLifetime = ServiceLifetime.Scoped;
-        });
 
         return services;
     }

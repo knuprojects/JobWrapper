@@ -1,30 +1,55 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Vacancies.Core.Helpers;
-using Vacancies.Core.Services;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Dal.Pagination;
+using Shared.Dal.Repositories;
+using Vacancies.Core.Entities;
+using Vacancies.Presentation.Requests;
 
 namespace Vacancies.Presentation.Controllers;
 
-[Route("api/[controller]")]
+[Authorize]
+[Route("api/vacancies")]
 [ApiController]
 public class VacanciesController : ControllerBase
 {
-    private readonly IActivateDriver _activateDriver;
-    private readonly IScrapperService _scrapperService;
-    public VacanciesController(
-        IActivateDriver activateDriver,
-        IScrapperService scrapperService)
+    private readonly IBaseRepository _repository;
+
+    public VacanciesController(IBaseRepository repository)
+        => _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async ValueTask<IActionResult> GetVacancies([FromQuery] DefaultRequest request)
     {
-        _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
-        _scrapperService = scrapperService ?? throw new ArgumentNullException(nameof(scrapperService));
+        var paginationFilter = new PaginationFilter(request.PageNumber, request.PageSize);
+
+        var vacancies = await _repository.GetListAsync<Vacancy>(paginationFilter);
+
+        return vacancies is null ? NoContent() : Ok(vacancies);
     }
 
-    [HttpGet("scrape")]
-    public async Task<IActionResult> ScrapeVacancies(string path)
+    [HttpGet("skills")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async ValueTask<IActionResult> GetVacanciesBySkills([FromQuery] GetBySkillsRequest request)
     {
-        var driver = await _activateDriver.ActivateScrapingDriver();
+        var paginationFilter = new PaginationFilter(request.PageNumber, request.PageSize);
 
-        var result = await _scrapperService.ScrapVacanciesByUrl(path, driver);
+        var vacancies = await _repository.GetEntitiesByConditionAsync<Vacancy>(x => x.Skills == request.Skills, paginationFilter);
 
-        return Ok(result);
+        return vacancies is null ? NoContent() : Ok(vacancies);
+    }
+
+    [HttpGet("salary")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async ValueTask<IActionResult> GetVacanciesBySalary([FromQuery] GetBySalaryRequest request)
+    {
+        var paginationFilter = new PaginationFilter(request.PageNumber, request.PageSize);
+
+        var vacancies = await _repository.GetEntitiesByConditionAsync<Vacancy>(x => x.Salary == request.Salary, paginationFilter);
+
+        return vacancies is null ? NoContent() : Ok(vacancies);
     }
 }

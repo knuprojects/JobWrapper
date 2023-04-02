@@ -14,7 +14,7 @@ namespace Users.Presentation.Controllers
         {
         }
 
-        [HttpPost("sign-up")]
+        [HttpPost("users/sign-up")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
@@ -27,7 +27,7 @@ namespace Users.Presentation.Controllers
             return Ok(jwt);
         }
 
-        [HttpPost("sign-in")]
+        [HttpPost("users/sign-in")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]
@@ -40,7 +40,7 @@ namespace Users.Presentation.Controllers
             return Ok(jwt);
         }
 
-        [HttpPost("revoke-token")]
+        [HttpPost("users/revoke-token")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]

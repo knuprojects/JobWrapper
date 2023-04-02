@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace Vacancies.Core.Helpers;
+namespace Vacancies.Core.Common.Helpers;
 
 public interface IActivateDriver
 {

@@ -13,12 +13,18 @@ public static class AddDefaultServices
         services.AddMapper();
         services.AddPersistence();
 
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
         return services;
     }
 
     public static void UseDefault(this WebApplication app)
     {
         app.UseShared();
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.MapControllers();
 

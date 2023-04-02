@@ -1,11 +1,11 @@
 ﻿using HtmlAgilityPack;
 using Mapster;
 using OpenQA.Selenium;
+using Shared.Dal.Repositories;
+using Vacancies.Core.Common.Helpers;
+using Vacancies.Core.Common.Responses;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Entities;
-using Vacancies.Core.Helpers;
-using Vacancies.Core.Repositories;
-using Vacancies.Core.Responses;
 
 namespace Vacancies.Core.Services;
 
@@ -19,12 +19,12 @@ public class ScrapperService : IScrapperService
     private bool isFinish = false;
     private readonly IActivateDriver _activateDriver;
     private readonly IElementFinder _elementFinder;
-    private readonly IVacancyRepository _repository;
+    private readonly IBaseRepository _repository;
 
     public ScrapperService(
         IActivateDriver activateDriver,
         IElementFinder elementFinder,
-        IVacancyRepository repository
+        IBaseRepository repository
         )
     {
         _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
@@ -147,7 +147,9 @@ public class ScrapperService : IScrapperService
 
         }
         vacanciesResponse.Adapt(vacancyResponse);
-        _repository.AddManyVacancies(vacanciesResponse);
+
+        _repository.AddMany<Vacancy>(vacanciesResponse);
+
         return vacancyResponse;
     }
 

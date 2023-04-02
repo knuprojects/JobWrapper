@@ -1,16 +1,22 @@
 ﻿using Shared;
+using Shared.Abstractions;
 using Vacancies.Core;
+using Vacancies.Core.Common.Options;
 using Vacancies.Persistence;
 
 namespace Vacancies.Presentation.Infrastructure;
 
 public static class AddDefaultServices
 {
-    public static IServiceCollection AddDefault(this IServiceCollection services)
+    private static string DjinniSectionName => "djinni";
+
+    public static IServiceCollection AddDefault(this IServiceCollection services, IConfiguration configuration)
     {
+        var djinniOptions = configuration.BindOptions<DjinniOptions>(DjinniSectionName);
+        services.AddSingleton(djinniOptions);
+
         services.AddControllers();
         services.AddCore();
-        services.AddMapper();
         services.AddPersistence();
 
         services.AddEndpointsApiExplorer();

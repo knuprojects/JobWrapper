@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
+using Vacancies.Core.Common.BackgroundServices;
 using Vacancies.Core.Common.Helpers;
 using Vacancies.Core.Common.Mapper;
 using Vacancies.Core.Services;
@@ -14,6 +15,10 @@ public static class Extensions
         services.AddSingleton<IElementFinder, ElementFinder>();
         services.AddScoped<IActivateDriver, ActivateDriver>();
         services.AddScoped<IScrapperService, ScrapperService>();
+
+        services.AddMapper();
+
+        services.AddHostedService<ScrapperBackgroundService>();
 
         return services;
     }

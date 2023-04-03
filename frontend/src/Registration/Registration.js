@@ -24,7 +24,7 @@ function Registration() {
                     return response;
                 })
                 .then(data => {
-                    localStorage.setItem('access_token', data.accessToken);
+                    localStorage.setItem('token', data.token);
                     console.log(data);
                 })
                 .catch(error => console.error(error));

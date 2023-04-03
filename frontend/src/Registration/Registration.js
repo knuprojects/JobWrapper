@@ -9,10 +9,11 @@ function Registration() {
         if (checkOut()) {
             const formData = {
                 userName: userName,
-                password: password,
                 email: email,
+                password: password,
                 roleGid: null
             };
+            console.log('Data:', formData);
             fetch('http://localhost:5010/api/users/sign-up', {
                 method: 'POST',
                 headers: {

@@ -37,6 +37,7 @@ function LogIn() {
         formData.append('userName', userName);
         formData.append('password', password);
         if (checkOut()) {
+            console.log(JSON.stringify({ userName, password }));
             fetch('http://localhost:5010/api/users/sign-in', {
                 method: 'POST',
                 headers: {
@@ -45,7 +46,7 @@ function LogIn() {
                 body: JSON.stringify({ userName, password })
             })
                 .then((response) => {
-                    return response.json();
+                    return response;
                 })
                 .then((data) => {
                     console.log(data);

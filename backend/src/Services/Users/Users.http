@@ -9,9 +9,9 @@ POST {{url}}/users/sign-up
 Content-Type: application/json
 
 {
-    "userName" : "tester1",
+    "userName": "test",
     "email" : "setunov9@gmail.com",
-    "password" : "password1",
+    "password" : "pass1",
     "roleGid" : null
 }
 

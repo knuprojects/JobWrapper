@@ -1,5 +1,5 @@
 import style from './Registration.module.scss'
-import { Link } from 'react-router-dom'
+import { json, Link } from 'react-router-dom'
 import { useState } from "react"
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,21 +10,26 @@ function Registration() {
             const formData = {
                 userName: userName,
                 password: password,
-                email: email
+                email: email,
+                roleGid: null
             };
-            fetch('http://localhost:5010/api/sign-up', {
+            fetch('http://localhost:5010/api/users/sign-up', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(formData)
             })
-            .then((response) => {
-                console.log(response);
-            })
-            .catch(e => console.log(e));
+                .then(response => {
+                    return response;
+                })
+                .then(data => {
+                    localStorage.setItem('access_token', data.accessToken);
+                    console.log(data);
+                })
+                .catch(error => console.error(error));
         }
-        
+
 
     }
     function getUserName(event) {

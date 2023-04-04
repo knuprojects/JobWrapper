@@ -46,17 +46,11 @@ function LogIn() {
                 body: JSON.stringify({ userName, password })
             })
                 .then((response) => {
+                    if (response.status === 200) {
+                        localStorage.setItem('token', response.token);
+                        navigate('/main');
+                    }
                     return response;
-                })
-                .then((data) => {
-                    console.log(data);
-                    localStorage.setItem('token', data.token);
-                    console.log(localStorage.getItem('token'));
-                    return data;
-                })
-                .then((data) => {
-                    console.log(data);
-                    // navigate('/main');
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -64,7 +58,7 @@ function LogIn() {
         }
     }
 
-    
+
 
 
 

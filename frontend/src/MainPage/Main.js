@@ -1,24 +1,25 @@
 import React, { useState } from 'react'
 import Header from './Header';
 import styles from './Main.module.scss';
-import { useEffect } from 'react';
 function Main(props) {
-
-    
-   return (
-        <div>
+    return (
+        <div className={styles.main}>
             <header className={styles.header}>
                 <Header />
             </header>
-            <nav>
-                Nav
-            </nav>
-            <aside>
-                Here be search
-            </aside>
-            <main>
-                Map
-            </main>
+            <div className={styles.content}>
+                <nav className={styles.nav}>
+                    <input  placeholder="Search..."></input>
+                </nav>
+                <aside className={styles.search}>
+                    Here be search
+                </aside >
+                <main className={styles.map}>
+                    Map
+                </main>
+            </div>
+
+
         </div>
     )
 }

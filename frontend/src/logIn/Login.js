@@ -1,4 +1,4 @@
-import { useState} from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import styles from './LogIn.module.scss'
 import { Link } from 'react-router-dom'
@@ -30,27 +30,36 @@ function LogIn() {
         }
         return check;
     }
-    
+
     const prevDef = (e) => {
         e.preventDefault();
         const formData = new URLSearchParams();
         formData.append('userName', userName);
         formData.append('password', password);
         if (checkOut()) {
-            fetch('http://localhost:5010/api/sign-in', {
+            console.log(JSON.stringify({ userName, password }));
+            fetch('http://localhost:5010/api/users/sign-in', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ userName, password })
-            }).then((response) => {
-                return response.json();
-            }).then((data) => {
-                console.log(data);
-                navigate('/main');
-                // Handle the response data here
-            }).catch((error) => {
-                console.error('Error:', error);
-            });
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        localStorage.setItem('token', response.token);
+                        navigate('/main');
+                    }
+                    return response;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
         }
     }
+
+
+
 
 
     return (

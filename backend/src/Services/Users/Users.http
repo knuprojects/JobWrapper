@@ -9,9 +9,9 @@ POST {{url}}/users/sign-up
 Content-Type: application/json
 
 {
-    "userName" : "sashaTkachuk",
-    "email" : "sashatkachuk09@ukr.net",
-    "password" : "Password1",
+    "userName" : "test",
+    "email" : "setunov9@gmail.com",
+    "password" : "pass1",
     "roleGid" : null
 }
 
@@ -20,7 +20,7 @@ POST {{url}}/users/sign-in
 Content-Type: application/json
 
 {
-    "userName" : "sashaTkachuk",
+    "userName" : "sashaTkachuk4433",
     "password" : "Password1"
 }
 

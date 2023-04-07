@@ -9,6 +9,7 @@ namespace Vacancies.Core.Common.BackgroundServices;
 
 public class ScrapperBackgroundService : BackgroundService
 {
+    private readonly TimeSpan _period = TimeSpan.FromDays(1);
     private readonly ILogger<ScrapperBackgroundService> _logger;
     private readonly DjinniOptions _djinniOptions;
     private readonly IServiceProvider _serviceProvider;
@@ -25,7 +26,9 @@ public class ScrapperBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!stoppingToken.IsCancellationRequested)
+        using PeriodicTimer timer = new PeriodicTimer(_period);
+
+        if (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken))
         {
             using var scope = _serviceProvider.CreateScope();
 
@@ -33,9 +36,15 @@ public class ScrapperBackgroundService : BackgroundService
             {
                 var activateDriver = scope.ServiceProvider.GetRequiredService<IActivateDriver>();
 
-                var driver = await activateDriver.ActivateScrapingDriver();
-
                 var scrapperService = scope.ServiceProvider.GetRequiredService<IScrapperService>();
+
+                if (activateDriver is null)
+                    throw new Exception("activateDriver is null!");
+
+                if (scrapperService is null)
+                    throw new Exception("scrapperService is null!");
+
+                var driver = await activateDriver.ActivateScrapingDriver();
 
                 await scrapperService.ScrapVacanciesByUrl(_djinniOptions.DjinniUrl, driver);
 

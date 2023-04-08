@@ -1,24 +1,64 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from './Header';
 import styles from './Main.module.scss';
-function Main(props) {
+import { vacancies } from './Data.js'
+import Items from '../Items/Items';
+function Main() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageNumber, setPageNumber] = useState(1);
+    const [token, setToken] = useState('');
+    const [vacancies,setVacancies] = useState([]);
+    const pageSize = 10;
+
+    useEffect(() => {
+        setToken(localStorage.getItem('token'));
+        getItems();
+    }, []);
+    async function getItems(pageNumber) {
+        try {
+            const response = await
+                fetch(`http://localhost:5020/api/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+            const items = await response.json();
+            setVacancies(items);
+        }
+        catch (error) {
+            console.log(error.message);
+        }
+        console.log(vacancies);
+    }
     return (
         <div className={styles.main}>
             <header className={styles.header}>
                 <Header />
             </header>
             <div className={styles.content}>
-                <nav className={styles.nav}>
-                    <input  placeholder="Search..."></input>
+                <nav className={styles.sea}>
+                    <input placeholder="Search..."></input>
                 </nav>
-                <aside className={styles.search}>
-                    Here be search
+                <aside className={styles.aside}>
+                    <div className={styles.items}>
+                        {vacancies.map((items) => (
+                                <Items
+                                    id = {items.gid}
+                                    name={items.name}
+                                    skills={items.skills}
+                                    location={items.location}
+                                    salary={items.salary}
+                                />
+                        ))}
+                    </div>
                 </aside >
-                <main className={styles.map}>
-                    Map
-                </main>
-            </div>
 
+            </div>
+            <main className={styles.map}>
+            </main>
 
         </div>
     )

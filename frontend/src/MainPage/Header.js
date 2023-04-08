@@ -24,16 +24,6 @@ function Header() {
                     isSearchable={true}
                 />
             </div>
-            <div className={styles.list} >
-                <label className={styles.label} >
-                    <img width='20rem' className={styles.favourites}
-                        src={'/img/heart-unliked.svg'}
-                    ></img>
-                    Обране
-                </label>
-            </div>
-
-
         </div>
     )
 }

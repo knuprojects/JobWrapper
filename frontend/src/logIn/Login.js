@@ -37,7 +37,6 @@ function LogIn() {
         formData.append('userName', userName);
         formData.append('password', password);
         if (checkOut()) {
-            console.log(JSON.stringify({ userName, password }));
             fetch('http://localhost:5010/api/users/sign-in', {
                 method: 'POST',
                 headers: {
@@ -45,12 +44,13 @@ function LogIn() {
                 },
                 body: JSON.stringify({ userName, password })
             })
-                .then((response) => {
+                .then(async (response) => {
+                    const resp = await response.json();
                     if (response.status === 200) {
-                        localStorage.setItem('token', response.token);
+                        localStorage.setItem('token', resp.token);
                         navigate('/main');
                     }
-                    return response;
+                    console.log(resp);
                 })
                 .catch((error) => {
                     console.error('Error:', error);

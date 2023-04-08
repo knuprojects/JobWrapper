@@ -6,7 +6,7 @@
 
 .main{
     display: grid;
-    grid-template-rows: 1.2fr 1fr;
+    grid-template-rows: 1.4fr 14fr;
     grid-template-areas:
     'header'
     'content'
@@ -14,11 +14,13 @@
 }
 
 .content{
-    height: auto;
+    overflow: auto;
+    height: 90%;
     width: 40%;
     padding-top: 1rem;
     grid-area: content;
     border: 1px solid;
+    border-radius:7px;
 }
 
 

@@ -1,4 +1,4 @@
-export const vacancies = [
+export const data = [
     {
       "gid": "b7769b9f-ba2d-45ad-aa45-1a003dd70a1e",
       "name": "Junior C#",

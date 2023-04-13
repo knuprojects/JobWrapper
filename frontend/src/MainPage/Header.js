@@ -11,7 +11,6 @@ function Header() {
     };
     return (
         <div className={styles.headerMain}>
-            Header
             <div className={styles.select}>
                 <Select
                     value={selectedCity}

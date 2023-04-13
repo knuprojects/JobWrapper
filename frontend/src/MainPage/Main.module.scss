@@ -1,26 +1,84 @@
-.header{
+.header {
     max-width: 100%;
     max-height: 100%;
 }
 
 
-.main{
+.main {
     display: grid;
-    grid-template-rows: 1.4fr 14fr;
+    grid-template-rows: 0.5fr 14fr;
     grid-template-areas:
-    'header'
-    'content'
+        'header'
+        'content'
     ;
 }
 
-.content{
+.content {
     overflow: auto;
     height: 90%;
     width: 40%;
     padding-top: 1rem;
     grid-area: content;
     border: 1px solid;
-    border-radius:7px;
+    border-radius: 7px;
+    margin-left: 1rem;
 }
 
 
+.item {
+    padding: 0.5rem;
+    border: 1px solid #646363;
+}
+
+.item:hover {
+    box-shadow: 0px 14px 30px rgba(0, 0, 0, 0.5);
+}
+
+.input{
+    height: 2.5rem;
+    width: 20rem;
+    padding: 1rem;
+    border: 1px solid;
+    border-radius: 10px;
+}
+.photo{
+    margin-left: 12rem;
+    cursor: pointer;
+}
+.search{
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+}
+
+
+.filters{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.modal {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: white;
+    height: 20rem;
+    width: 40rem;
+}
+.close{
+    position: absolute;
+    &:hover {
+        opacity: 0.5;
+    }
+}
+img{
+    margin-left: 35rem;
+    cursor: pointer;
+}

@@ -47,9 +47,6 @@ function Main() {
                     />
                 </div> : null}
             <div className={styles.main}>
-                <header className={styles.header}>
-                    <Header />
-                </header>
                 <div className={styles.content}>
 
                     <nav className={styles.search}>

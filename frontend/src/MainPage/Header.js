@@ -12,16 +12,7 @@ function Header() {
     return (
         <div className={styles.headerMain}>
             <div className={styles.select}>
-                <Select
-                    value={selectedCity}
-                    onChange={handleChange}
-                    options={cities}
-                    placeholder="Місто"
-                    className="dropdown"
-                    classNamePrefix="dropdown"
-                    isClearable={true}
-                    isSearchable={true}
-                />
+                
             </div>
         </div>
     )

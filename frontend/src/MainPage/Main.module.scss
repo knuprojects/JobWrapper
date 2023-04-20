@@ -3,6 +3,10 @@
     max-height: 100%;
 }
 
+.wrapper {
+    height: 90%;
+    width: 40%;
+}
 
 .main {
     padding: 2rem 1rem;
@@ -10,8 +14,6 @@
 
 .content {
     overflow: auto;
-    height: 90%;
-    width: 40%;
     padding-top: 1rem;
     grid-area: content;
     border: 1px solid;
@@ -37,16 +39,19 @@
     border-radius: 10px;
 }
 
-.photo {
-    margin-left: 12rem;
-    cursor: pointer;
-}
-
 .search {
     display: flex;
     flex-direction: row;
     padding: 1rem;
+
 }
+
+.photo {
+    margin-left: auto;
+    cursor: pointer;
+}
+
+
 
 
 .filters {
@@ -66,22 +71,21 @@
     padding: 20px;
     border-radius: 12px;
     background-color: white;
-    height: 25rem;
+    height: auto;
     width: 40rem;
 }
 
 .close {
+    margin-left: 35rem;
     position: absolute;
 
     &:hover {
         opacity: 0.5;
     }
-}
 
-img {
-    margin-left: 35rem;
     cursor: pointer;
 }
+
 
 
 .filtersInput {
@@ -106,10 +110,37 @@ img {
     transition: transform 0.2s ease-in-out;
 }
 
+.skills {
+    margin: 1rem auto;
+    background: #2D2F2C;
+    color: #e7F6FF;
+    border-radius: 18px;
+    border: 0;
+    font-size: 15px;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    margin: 0;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+        color: lighten($color: #e7F6FF, $amount: 5)
+    }
+
+    &:active {
+        color: darken($color: #e7F6FF, $amount: 5)
+    }
+}
+
 .ok:hover {
     color: lighten($color: #e7F6FF, $amount: 5)
 }
 
 .ok:active {
     color: darken($color: #e7F6FF, $amount: 5)
+}
+
+.datePicker {
+    color: black;
 }

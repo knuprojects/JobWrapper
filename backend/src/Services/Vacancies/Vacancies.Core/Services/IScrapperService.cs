@@ -3,7 +3,7 @@ using Mapster;
 using OpenQA.Selenium;
 using Shared.Dal.Repositories;
 using Vacancies.Core.Common.Helpers;
-using Vacancies.Core.Common.Responses;
+using Vacancies.Core.Common.Queries.Vacancies;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Entities;
 

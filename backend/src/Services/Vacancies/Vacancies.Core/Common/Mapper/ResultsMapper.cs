@@ -1,5 +1,5 @@
 ﻿using Mapster;
-using Vacancies.Core.Common.Responses;
+using Vacancies.Core.Common.Queries.Vacancies;
 using Vacancies.Core.Entities;
 
 namespace Vacancies.Core.Common.Mapper

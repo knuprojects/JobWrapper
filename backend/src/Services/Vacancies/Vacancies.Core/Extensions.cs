@@ -17,6 +17,9 @@ public static class Extensions
         services.AddScoped<IScrapperService, ScrapperService>();
 
         services.AddMapper();
+        services.AddMediator(options => {
+            options.ServiceLifetime = ServiceLifetime.Scoped;
+        });
 
         services.AddHostedService<ScrapperBackgroundService>();
 

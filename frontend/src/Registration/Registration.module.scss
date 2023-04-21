@@ -30,9 +30,16 @@
    height: 2.6rem;
    cursor: pointer;
    transition: transform 0.2s ease-in-out;
+ 
+}
+
+.goBack:hover{
+   color: lighten($color: #2D2F2C, $amount: 72)
 }
 
 .img {
+   margin: 0;
+   padding: 0;
    width: 30rem;
    height: 20rem;
 }

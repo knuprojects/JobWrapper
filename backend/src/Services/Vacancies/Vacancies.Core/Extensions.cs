@@ -10,7 +10,7 @@ namespace Vacancies.Core;
 public static class Extensions
 {
     private const string WordOfDay = "сьогодні";
-    private const string WordOfYesterdayDay = "сьогодні";
+    private const string WordOfYesterdayDay = "вчора";
 
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
@@ -30,8 +30,6 @@ public static class Extensions
 
     public static DateTime? ParseDate(string text)
     {
-        string monthNameText = null;
-
         if (text is null) return null;
 
         if (text.Contains(WordOfDay)) return DateTime.UtcNow;
@@ -55,6 +53,8 @@ public static class Extensions
 
             return new DateTime(DateTime.Now.Year, monthNumber.GetValueOrDefault(), monthDay);
         }
+
+        return null;
     }
 
     internal static int GetMonthNumberFromMonthName(this string monthName)

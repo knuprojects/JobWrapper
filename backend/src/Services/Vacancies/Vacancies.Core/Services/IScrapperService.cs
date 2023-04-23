@@ -69,8 +69,6 @@ public class ScrapperService : IScrapperService
             var skills = new List<string>();
             var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
 
-            var dateOfCreation = _elementFinder.FindSingleNodeInnerHtmlByXpath(vacancy, XpathConsts.Xpath.DjinniVacancyCreationDate);
-
             if (additionalDjinniPath is not null)
             {
                 var driver = await ActivateScrappingAsync(VacanciesConsts.DjinniUrl, additionalDjinniPath);
@@ -138,14 +136,11 @@ public class ScrapperService : IScrapperService
             var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniVacancyName) ??
                               _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniAdditionalVacancyName);
 
-            var creationDate = Extensions.ParseDate(dateOfCreation);
-
             var vacancyToDb = new Vacancy(
                 vacancyName,
                 skills,
                 coordinates,
-                salary ?? "",
-                creationDate.GetValueOrDefault()
+                salary ?? ""
                 );
 
             vacanciesResponse.Add(vacancyToDb);

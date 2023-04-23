@@ -13,6 +13,5 @@ internal sealed class VacancyConfiguration : IEntityTypeConfiguration<Vacancy>
         builder.Property(x => x.Skills);
         builder.Property(x => x.Location);
         builder.Property(x => x.Salary);
-        builder.Property(x => x.CreationDate);
     }
 }

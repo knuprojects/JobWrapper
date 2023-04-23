@@ -18,3 +18,8 @@ GET {{url}}/vacancies/salary?PageNumber={{{pageNumber}}}&PageSize={{pageSize}}&S
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+###
+GET {{url}}/vacancies/salary?PageNumber={{{pageNumber}}}&PageSize={{pageSize}}&?Skillls=AspNet&Skills=English&?Salary=1000
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

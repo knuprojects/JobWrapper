@@ -1,23 +1,25 @@
-﻿using Mapster;
-using MapsterMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Vacancies.Core.Common.BackgroundServices;
 using Vacancies.Core.Common.Helpers;
-using Vacancies.Core.Common.Mapper;
 using Vacancies.Core.Services;
 
 namespace Vacancies.Core;
 
 public static class Extensions
 {
+    private const string WordOfDay = "сьогодні";
+    private const string WordOfYesterdayDay = "вчора";
+
     public static IServiceCollection AddCore(this IServiceCollection services)
     {
         services.AddSingleton<IElementFinder, ElementFinder>();
         services.AddScoped<IActivateDriver, ActivateDriver>();
         services.AddScoped<IScrapperService, ScrapperService>();
 
-        services.AddMapper();
-        services.AddMediator(options => {
+        services.AddMediator(options =>
+        {
             options.ServiceLifetime = ServiceLifetime.Scoped;
         });
 
@@ -26,19 +28,38 @@ public static class Extensions
         return services;
     }
 
-    private static TypeAdapterConfig GetConfigureMappingConfig()
+    public static DateTime? ParseDate(string text)
     {
-        var config = new TypeAdapterConfig();
+        if (text is null) return null;
 
-        new ResultsMapper().Register(config);
+        if (text.Contains(WordOfDay)) return DateTime.UtcNow;
 
-        return config;
+        if (text.Contains(WordOfYesterdayDay)) return DateTime.Today.AddDays(-1);
+
+        string pattern = @"\d+\s\p{L}+";
+        Match match = Regex.Match(text, pattern);
+
+        if (match.Success)
+        {
+            string result = match.Value.Trim();
+
+            var monthDayText = result.Substring(0, 3);
+
+            var monthNameText = result.Substring(3);
+
+            var monthNumber = monthNameText?.GetMonthNumberFromMonthName();
+
+            var monthDay = Convert.ToInt32(monthDayText);
+
+            return new DateTime(DateTime.Now.Year, monthNumber.GetValueOrDefault(), monthDay);
+        }
+
+        return null;
     }
 
-    public static IServiceCollection AddMapper(this IServiceCollection services)
+    internal static int GetMonthNumberFromMonthName(this string monthName)
     {
-        services.AddSingleton(GetConfigureMappingConfig());
-        services.AddScoped<IMapper, ServiceMapper>();
-        return services;
+        var monthNumber = DateTime.ParseExact(monthName, "MMMM", CultureInfo.InvariantCulture).Month;
+        return monthNumber;
     }
 }

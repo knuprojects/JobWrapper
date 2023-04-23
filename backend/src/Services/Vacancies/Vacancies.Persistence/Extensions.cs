@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Shared.Dal;
 
-namespace Vacancies.Persistence
+namespace Vacancies.Persistence;
+
+public static class Extensions
 {
-    public static class Extensions
-    {
-        public static IServiceCollection AddPersistence(this IServiceCollection services)
-            => services.AddPostgresDatabase<VacancyContext>();
-    }
+    public static IServiceCollection AddPersistence(this IServiceCollection services)
+        => services.AddPostgresDatabase<VacancyContext>();
 }

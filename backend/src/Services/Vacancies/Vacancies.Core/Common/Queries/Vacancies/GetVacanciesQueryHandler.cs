@@ -5,12 +5,7 @@ using Vacancies.Core.Entities;
 
 namespace Vacancies.Core.Common.Queries.Vacancies;
 
-<<<<<<< HEAD
 public record GetVacanciesByFiltersQuery(int PageNumber, int PageSize, List<string> Skills, List<string> Salary, PaginationFilter PaginationFilter) : IQuery<PaginationResponse<Vacancy>>;
-=======
-public record GetVacanciesByFiltersQuery(int PageNumber, int PageSize, List<string> Skills, List<string> Salary, DateTime StartDate, DateTime EndDate, PaginationFilter PaginationFilter) : IQuery<PaginationResponse<Vacancy>>;
-
->>>>>>> 8acde9ad7d24b57108b45110c72cf3b74e195904
 public class GetVacanciesQueryHandler : IQueryHandler<GetVacanciesByFiltersQuery, PaginationResponse<Vacancy>>
 {
     private readonly IBaseRepository _repository;

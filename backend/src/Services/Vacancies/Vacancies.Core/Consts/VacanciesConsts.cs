@@ -19,6 +19,7 @@ public static class XpathConsts
         public static string DjinniAdditionalVacancyName = "div[1]/div[2]/a[2]/span";
         public static string DjinniJobAdditionalInfo = "div[1]/div[1]/div[3]/div[2]/div/ul[1]/li[1]";
         public static string DjinniInnerText = "innerText";
+        public static string DjinniVacancyCreationDate = "div[1]/div[1]";
 
         //DJINNI
         public static string DjinniAdditionalInfo = "//*[@class='container job-post-page']/div[3]/div[2]/div/ul[1]";

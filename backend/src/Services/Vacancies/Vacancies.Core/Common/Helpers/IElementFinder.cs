@@ -1,6 +1,5 @@
 ﻿using HtmlAgilityPack;
 using OpenQA.Selenium;
-using Vacancies.Core.Consts;
 
 namespace Vacancies.Core.Common.Helpers;
 
@@ -10,6 +9,7 @@ public interface IElementFinder
     List<HtmlNode>? FindChildNodesByElement(HtmlDocument document, string element);
     string? FindSingleNodeByXpathAndElement(HtmlNode? node, string xpath, string element);
     string? FindSingleNodeInnerTextByXpath(HtmlNode? node, string xpath);
+    string? FindSingleNodeInnerHtmlByXpath(HtmlNode? node, string xpath);
     IWebElement? FindElementsByXpath(IWebDriver driver, string xpath);
     string? FindElementsByXpathAndAttribute(IWebDriver driver, string xpath, string attribute);
     IWebElement? FindFirstElementByByDjinniAdditionalInfo(IWebDriver driver, string xpath);
@@ -39,6 +39,9 @@ public class ElementFinder : IElementFinder
 
     public string? FindSingleNodeInnerTextByXpath(HtmlNode? node, string xpath)
         => node?.SelectSingleNode(xpath).InnerText;
+
+    public string? FindSingleNodeInnerHtmlByXpath(HtmlNode? node, string xpath)
+        => node?.SelectSingleNode(xpath).InnerHtml;
 
     public IWebElement? FindElementsByXpath(IWebDriver driver, string xpath)
         => driver.FindElements(By.XPath(xpath))?.FirstOrDefault();

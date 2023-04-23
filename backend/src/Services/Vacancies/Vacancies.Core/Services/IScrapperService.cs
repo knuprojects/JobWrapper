@@ -1,9 +1,8 @@
 ﻿using HtmlAgilityPack;
-using Mapster;
 using OpenQA.Selenium;
 using Shared.Dal.Repositories;
+using Shared.Dal.Utils;
 using Vacancies.Core.Common.Helpers;
-using Vacancies.Core.Common.Queries.Vacancies;
 using Vacancies.Core.Consts;
 using Vacancies.Core.Entities;
 
@@ -11,53 +10,55 @@ namespace Vacancies.Core.Services;
 
 public interface IScrapperService
 {
-    ValueTask<List<VacancyResponse>> ScrapVacanciesByUrl(string path, IWebDriver driver);
+    ValueTask<List<Vacancy>> ScrapVacanciesByUrl(string path, IWebDriver driver, CancellationToken cancellationToken);
 }
 
 public class ScrapperService : IScrapperService
 {
     private bool isFinish = false;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IActivateDriver _activateDriver;
     private readonly IElementFinder _elementFinder;
     private readonly IBaseRepository _repository;
 
     public ScrapperService(
+        IUnitOfWork unitOfWork,
         IActivateDriver activateDriver,
         IElementFinder elementFinder,
         IBaseRepository repository
         )
     {
+        _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _activateDriver = activateDriver ?? throw new ArgumentNullException(nameof(activateDriver));
         _elementFinder = elementFinder ?? throw new ArgumentNullException(nameof(elementFinder));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async ValueTask<List<VacancyResponse>> ScrapVacanciesByUrl(string path, IWebDriver driver)
+    public async ValueTask<List<Vacancy>> ScrapVacanciesByUrl(string path, IWebDriver driver, CancellationToken cancellationToken)
     {
         driver.Navigate().GoToUrl(path);
 
         await Task.Delay(200);
 
-        return await ScrollVacancies(driver);
+        return await ScrollVacancies(driver, cancellationToken);
     }
 
-    public async ValueTask<List<VacancyResponse>> ScrollVacancies(IWebDriver driver)
+    public async ValueTask<List<Vacancy>> ScrollVacancies(IWebDriver driver, CancellationToken cancellationToken)
     {
         var paginationButton = _elementFinder.FindElementsByXpath(driver, XpathConsts.Xpath.PaginationButton);
 
         if (paginationButton is null)
-            return await FillVacanciesAsync(driver);
+            return await FillVacanciesAsync(driver, cancellationToken);
 
-        var items = await FillVacanciesAsync(driver);
+        var items = await FillVacanciesAsync(driver, cancellationToken);
 
-        items = await FillWithPaginationAsync(driver, paginationButton);
+        items = await FillWithPaginationAsync(driver, paginationButton, cancellationToken);
 
         return items;
     }
 
-    private async ValueTask<List<VacancyResponse>> FindVacancies(List<HtmlNode>? vacancies)
+    private async ValueTask<List<Vacancy>> FindVacancies(List<HtmlNode>? vacancies, CancellationToken cancellationToken)
     {
-        var vacancyResponse = new List<VacancyResponse>();
         var vacanciesResponse = new List<Vacancy>();
         string coordinates = "";
         string salary = null;
@@ -67,6 +68,8 @@ public class ScrapperService : IScrapperService
 
             var skills = new List<string>();
             var additionalDjinniPath = _elementFinder.FindSingleNodeByXpathAndElement(vacancy, XpathConsts.Xpath.DjinniCurrentVacancy, XpathConsts.ElementsToFind.AttributeToFind);
+
+            var dateOfCreation = _elementFinder.FindSingleNodeInnerHtmlByXpath(vacancy, XpathConsts.Xpath.DjinniVacancyCreationDate);
 
             if (additionalDjinniPath is not null)
             {
@@ -135,22 +138,24 @@ public class ScrapperService : IScrapperService
             var vacancyName = _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniVacancyName) ??
                               _elementFinder.FindSingleNodeInnerTextByXpath(vacancy, XpathConsts.Xpath.DjinniAdditionalVacancyName);
 
-            var response = new VacancyResponse(
-                Guid.NewGuid(),
+            var creationDate = Extensions.ParseDate(dateOfCreation);
+
+            var vacancyToDb = new Vacancy(
                 vacancyName,
                 skills,
                 coordinates,
-                salary
+                salary ?? "",
+                creationDate.GetValueOrDefault()
                 );
 
-            vacancyResponse.Add(response);
-
+            vacanciesResponse.Add(vacancyToDb);
         }
-        vacanciesResponse.Adapt(vacancyResponse);
 
         _repository.AddMany<Vacancy>(vacanciesResponse);
 
-        return vacancyResponse;
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return vacanciesResponse;
     }
 
     private List<HtmlNode?> ReloadDocument(IWebDriver driver)
@@ -169,17 +174,17 @@ public class ScrapperService : IScrapperService
         return _elementFinder.FindChildNodesByElement(document, XpathConsts.ElementsToFind.ListElementToFind);
     }
 
-    private async ValueTask<List<VacancyResponse>> FillVacanciesAsync(IWebDriver driver)
+    private async ValueTask<List<Vacancy>> FillVacanciesAsync(IWebDriver driver, CancellationToken cancellationToken)
     {
         var vacancies = SetVacancies(driver);
 
-        return await FindVacancies(vacancies);
+        return await FindVacancies(vacancies, cancellationToken);
     }
 
-    private async ValueTask<List<VacancyResponse>> FillWithPaginationAsync(IWebDriver driver, IWebElement paginationButton)
+    private async ValueTask<List<Vacancy>> FillWithPaginationAsync(IWebDriver driver, IWebElement paginationButton, CancellationToken cancellationToken)
     {
         var vacancies = new List<HtmlNode?>();
-        var response = new List<VacancyResponse>();
+        var response = new List<Vacancy>();
 
         while (!isFinish)
         {
@@ -196,7 +201,7 @@ public class ScrapperService : IScrapperService
                     foreach (var item in items)
                         vacancies.Add(item);
 
-                response = await FindVacancies(vacancies);
+                response = await FindVacancies(vacancies, cancellationToken);
             }
             else
                 isFinish = true;

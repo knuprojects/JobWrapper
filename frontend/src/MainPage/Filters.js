@@ -4,9 +4,6 @@ import styles from './Main.module.scss';
 
 
 const Filters = ({ showFilters }) => {
-    const [dateOfCreation, setDateOfCreation] = useState();
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
     const [minSalary, setMinSalary] = useState();
     const [maxSalary, setMaxSalary] = useState();
     const [skills, setSkills] = useState([]);
@@ -38,25 +35,6 @@ const Filters = ({ showFilters }) => {
                 </li>
                 {minSalary && maxSalary && (
                     <p>You put: {minSalary} to {maxSalary} </p>
-                )}
-                <li>
-                    <p>Enter date of creation:</p>
-                    <p><input value={dateOfCreation} onChange={(event) => { setDateOfCreation(event.target.value) }} className={styles.filtersInput} type='date' placeholder='Date of creation:' /></p>
-                    {dateOfCreation && (<p>You put: {dateOfCreation}</p>)}
-                </li>
-                <li className='d-flex'>
-                    <div>
-                        <p className='mr-40'>Enter from this date</p>
-                        <p>  <input value={startDate} onChange={(event) => { setStartDate(event.target.value) }} className={styles.filtersInput} type='date' placeholder='From that date' /></p>
-                    </div>
-                    <div>
-                        <p>Enter the following date</p>
-                        <p><input value={endDate} onChange={(event) => { setEndDate(event.target.value) }} className={styles.filtersInput} type='date' placeholder='To this date' /></p>
-                    </div>
-
-                </li>
-                {startDate && endDate && (
-                    <p>You put: {startDate} to {endDate} </p>
                 )}
                 <li className='d-flex align-center'>
                     <p>Enter skills</p>

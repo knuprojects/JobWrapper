@@ -144,3 +144,18 @@
 .datePicker {
     color: black;
 }
+
+
+
+.pagination {
+    margin-left: 1rem;
+    margin-top: 0.5rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: 0.5rem;
+}
+
+.active {
+    background-color: whitesmoke;
+    color: black;
+}  

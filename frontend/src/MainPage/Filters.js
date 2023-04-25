@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import styles from './Main.module.scss';
 
 
-
 const Filters = ({ showFilters }) => {
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [minSalary, setMinSalary] = useState();
     const [maxSalary, setMaxSalary] = useState();
     const [skills, setSkills] = useState([]);
@@ -18,6 +19,24 @@ const Filters = ({ showFilters }) => {
     function skillsInput(event) {
         setSkills(prevSkills => [...prevSkills, document.getElementById('skillInput').value]);
         console.log(skills);
+    }
+
+    function sendFilter() {
+        const salary = [minSalary, maxSalary].join('-');
+        const url = `{{http://localhost:5020/api}}/vacancies/PageNumber={{{pageNumber}}}&PageSize={{pageSize}}&?Skillls=AspNet&Skills=${skills}&?Salary=${salary}`;
+        const accessToken = '{{accessToken}}';
+        const headers = new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        });
+        fetch(url, {
+            method: 'GET',
+            headers: headers
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+        showFilters();
     }
 
 
@@ -41,10 +60,10 @@ const Filters = ({ showFilters }) => {
                     <input id="skillInput" className={styles.filtersInput} placeholder=' Your skill:' />
                     <button className={styles.skills} onClick={skillsInput}>+</button>
                 </li>
-                {skills.length>0 && (
+                {skills.length > 0 && (
                     <p>You put: {skills.join(',')} </p>
                 )}
-                <button onClick={showFilters} className={styles.ok}>Оk</button>
+                <button onClick={sendFilter} className={styles.ok}>Оk</button>
 
             </ul>
         </div>

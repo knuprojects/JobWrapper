@@ -1,33 +1,80 @@
 import React, { useState, useEffect } from 'react'
 import styles from './Main.module.scss';
-import { data } from './Data.js';
 import Items from '../Items/Items';
 import Filters from './Filters';
-
+import Map, { NavigationControl, Marker } from 'react-map-gl';
+import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 function Main() {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [items, setItems] = useState([]);
+    const [pageNumber, setPageNumber] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
-    const [items, setItems] = useState([]);
     const [filters, setFilters] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const url = 'http://localhost:5020/api';
     useEffect(() => {
-        // Your API call to fetch the data goes here
-        // This is just an example using the data you provided
-        setTotalItems(data[0].totalItems);
-        setItems(data[0].items);
-    }, []);
+        async function getVacancies() {
+            setIsLoading(true);
+            try {
+                const response = await fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setItems(data);
+                setTotalItems(data.length); // assuming data.length is the total number of items
+                setIsLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setIsLoading(false);
+            }
+        }
+        getVacancies();
+    }, [pageNumber, pageSize]);
+
 
     function showFilters() {
         setFilters(!filters);
     }
 
     function handlePageClick(pageNumber) {
-        setCurrentPage(pageNumber);
+        setPageNumber(pageNumber);
+        setIsLoading(true);
+
+        fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setItems(data);
+                setTotalItems(data.length); // assuming data.length is the total number of items
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                setError(error.message);
+                setIsLoading(false);
+            });
     }
 
+
+
     const pageCount = Math.ceil(totalItems / pageSize);
-    const visibleItemsStartIndex = (currentPage - 1) * pageSize;
+    const visibleItemsStartIndex = (pageNumber - 1) * pageSize;
     const visibleItemsEndIndex = visibleItemsStartIndex + pageSize;
     const visibleItems = items.slice(visibleItemsStartIndex, visibleItemsEndIndex);
 
@@ -39,6 +86,10 @@ function Main() {
                         <Filters showFilters={showFilters} />
                     </div>
                 }
+
+                <div className="page">
+
+                </div>
                 <div className={styles.main}>
                     <div className={styles.content}>
                         <nav className={styles.search}>
@@ -47,9 +98,9 @@ function Main() {
                         </nav>
                         <aside className={styles.aside}>
                             <div>
-                                {visibleItems.map((item) => (
+                                {visibleItems.map((item, index) => (
                                     <Items
-                                        key={item.gid}
+                                        key={index}
                                         id={item.gid}
                                         name={item.name}
                                         skills={item.skills}
@@ -60,35 +111,62 @@ function Main() {
                             </div>
                         </aside>
                     </div>
-                    <main className={styles.map}>
-                        <div className={styles.pagination}>
+                    <div className={styles.pagination}>
+                        <button
+                            disabled={pageNumber === 1}
+                            onClick={() => handlePageClick(pageNumber - 1)}
+                        >
+                            Previous
+                        </button>
+                        {Array.from({ length: pageCount }, (_, i) => (
                             <button
-                                disabled={currentPage === 1}
-                                onClick={() => handlePageClick(currentPage - 1)}
+                                key={i}
+                                onClick={() => handlePageClick(i + 1)}
+                                className={i + 1 === pageNumber ? styles.active : ''}
                             >
-                                Previous
+                                {i + 1}
                             </button>
-                            {Array.from({ length: pageCount }, (_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => handlePageClick(i + 1)}
-                                    className={i + 1 === currentPage ? styles.active : ''}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                            <button
-                                disabled={currentPage === pageCount}
-                                onClick={() => handlePageClick(currentPage + 1)}
-                            >
-                                Next
-                            </button>
-                        </div>
-                    </main>
+                        ))}
+                        <button
+                            disabled={pageNumber === pageCount}
+                            onClick={() => handlePageClick(pageNumber + 1)}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
+                <main className={styles.map}>
+                    <Map mapLib={maplibregl}
+                        initialViewState={{
+                            longitude: 30.4222701,
+                            latitude: 50.446638,
+                            zoom: 14
+                        }}
+                        style={{ width: "100%", height: " 100%" }}
+                        mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=H2he3gVAuTjVermVNqo6	"
+                    >
+                        <NavigationControl position="top-right" />
+                        {items.map((item, index) => {
+                            const [lat, lng] = item.location.split('&');
+                            return (
+                                <Marker
+                                    key={index}
+                                    longitude={parseFloat(lng)}
+                                    latitude={parseFloat(lat)}
+                                    color="#61dbfb"
+                                />
+                            );
+                        })}
+                    </Map>
+
+                </main>
+
             </div>
-        </div>
+
+        </div >
+
     );
+
 }
 
 export default Main;

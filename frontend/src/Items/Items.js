@@ -1,7 +1,8 @@
 import React from 'react'
 import styles from '../MainPage/Main.module.scss';
+
+
 function Items({ name, skills, location, salary, id }) {
-    console.log(name);
     return (
         <div className={styles.item} key={id}>
             <ul>
@@ -10,7 +11,6 @@ function Items({ name, skills, location, salary, id }) {
                 <li> <h3> {salary && <>
                     Заробітня плата: {salary}
                 </>}</h3></li>
-                <li><h3>{location}</h3> </li>
             </ul>
         </div>
     )

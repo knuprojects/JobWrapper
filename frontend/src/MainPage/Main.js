@@ -12,6 +12,7 @@ function Main() {
     const [totalItems, setTotalItems] = useState(0);
     const [filters, setFilters] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
     const [error, setError] = useState(null);
     const url = 'http://localhost:5020/api';
     useEffect(() => {
@@ -42,6 +43,9 @@ function Main() {
 
     function showFilters() {
         setFilters(!filters);
+    }
+    const onChangeSearchInput = (event) => {
+        setSearchValue(event.target.value);
     }
 
     function handlePageClick(pageNumber) {
@@ -93,12 +97,13 @@ function Main() {
                 <div className={styles.main}>
                     <div className={styles.content}>
                         <nav className={styles.search}>
-                            <input className={styles.input} placeholder="Search..." />
+                            <input onChange={onChangeSearchInput} value={searchValue} className={styles.input} placeholder="Search..." />
                             <img onClick={showFilters} className={styles.photo} src='./img/Rectangle 22.png' width={38} height={40} alt='filter' />
                         </nav>
                         <aside className={styles.aside}>
                             <div>
-                                {visibleItems.map((item, index) => (
+                                {visibleItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
+                                .map((item, index) => (
                                     <Items
                                         key={index}
                                         id={item.gid}

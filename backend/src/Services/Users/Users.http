@@ -1,0 +1,34 @@
+@url = http://localhost:5010/api
+@accessToken = test
+
+@userGid = test
+@access-token = test
+
+###
+POST {{url}}/users/sign-up
+Content-Type: application/json
+
+{
+    "userName" : "test",
+    "email" : "setunov9@gmail.com",
+    "password" : "pass1",
+    "roleGid" : null
+}
+
+###
+POST {{url}}/users/sign-in
+Content-Type: application/json
+
+{
+    "userName" : "sashaTkachuk4433",
+    "password" : "Password1"
+}
+
+###
+PATCH  {{url}}/users/revoke-token
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "userGid" : "{{userGid}}"
+}

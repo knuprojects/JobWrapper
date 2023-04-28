@@ -7,10 +7,10 @@ function Items({ name, skills, location, salary, id }) {
         <div className={styles.item} key={id}>
             <h3 className={styles.item__name}>Позиція: {name}</h3>
             <p className={styles.item__desc}>
-                <span className={styles.item__skills}>
+                <span className={styles.skills }>
                     <span className={styles.item__skills-title}>Навички:</span>{skills.join(', ')}
                 </span>
-                <span className={styles.item__salary}>{salary && <>
+                <span className={styles.filtersInput}>{salary && <>
                     <span className={styles.item__salary-title}></span>Заробітня плата: {salary}
                 </>}
                 </span>

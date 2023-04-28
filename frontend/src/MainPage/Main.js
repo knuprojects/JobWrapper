@@ -40,7 +40,6 @@ function Main() {
         getVacancies();
     }, [pageNumber, pageSize]);
 
-
     function showFilters() {
         setFilters(!filters);
     }

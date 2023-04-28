@@ -74,8 +74,6 @@ function Main() {
             });
     }
 
-
-
     const pageCount = Math.ceil(totalItems / pageSize);
     const visibleItemsStartIndex = (pageNumber - 1) * pageSize;
     const visibleItemsEndIndex = visibleItemsStartIndex + pageSize;
@@ -90,14 +88,11 @@ function Main() {
                     </div>
                 }
 
-                <div className="page">
-
-                </div>
                 <div className={styles.main}>
                     <div className={styles.content}>
                         <nav className={styles.search}>
                             <input onChange={onChangeSearchInput} value={searchValue} className={styles.input} placeholder="Search..." />
-                            <img onClick={showFilters} className={styles.photo} src='./img/Rectangle 22.png' width={38} height={40} alt='filter' />
+                            <img onClick={showFilters} className={styles.settings} src='./img/Rectangle 22.png' alt='filter' />
                         </nav>
                         <aside className={styles.aside}>
                             <div>
@@ -117,6 +112,7 @@ function Main() {
                     </div>
                     <div className={styles.pagination}>
                         <button
+                            className={styles.paginationBtn}
                             disabled={pageNumber === 1}
                             onClick={() => handlePageClick(pageNumber - 1)}
                         >
@@ -132,6 +128,7 @@ function Main() {
                             </button>
                         ))}
                         <button
+                            className={styles.paginationBtn}
                             disabled={pageNumber === pageCount}
                             onClick={() => handlePageClick(pageNumber + 1)}
                         >
@@ -163,9 +160,7 @@ function Main() {
                         })}
                     </Map>
                 </main>
-
             </div>
-
         </div >
 
     );

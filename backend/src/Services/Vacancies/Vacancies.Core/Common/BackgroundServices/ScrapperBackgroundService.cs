@@ -9,7 +9,7 @@ namespace Vacancies.Core.Common.BackgroundServices;
 
 public class ScrapperBackgroundService : BackgroundService
 {
-    private readonly TimeSpan _period = TimeSpan.FromDays(1);
+    //private readonly TimeSpan _period = TimeSpan.FromDays(1);
     private readonly ILogger<ScrapperBackgroundService> _logger;
     private readonly DjinniOptions _djinniOptions;
     private readonly IServiceProvider _serviceProvider;
@@ -26,9 +26,11 @@ public class ScrapperBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        using PeriodicTimer timer = new PeriodicTimer(_period);
+        // using PeriodicTimer timer = new PeriodicTimer(_period);
 
-        if (!cancellationToken.IsCancellationRequested && await timer.WaitForNextTickAsync(cancellationToken))
+        //&& await timer.WaitForNextTickAsync(cancellationToken)
+
+        if (!cancellationToken.IsCancellationRequested)
         {
             using var scope = _serviceProvider.CreateScope();
 

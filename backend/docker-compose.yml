@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres
+
+  seq:
+    image: datalust/seq 
+
+  frontend:
+    image: frontend
+    build:
+     context: ../frontend
+     dockerfile: Dockerfile
+
+  jobwrapper.gateway:
+    image: jobwrapper-gateway
+    build:
+      context: .
+      dockerfile: src/Gateway/JobWrapper.Gateway/Dockerfile
+
+  vacancies.presentation:
+    image: vacancies-service
+    build:
+      context: .
+      dockerfile: src/Services/Vacancies/Vacancies.Presentation/Dockerfile
+
+  users.presentation:
+    image: users-service
+    build:
+      context: .
+      dockerfile: src/Services/Users/Users.Presentation/Dockerfile
+
+volumes:
+  postgres:
+    driver: local
+  seq:
+    driver: local
+

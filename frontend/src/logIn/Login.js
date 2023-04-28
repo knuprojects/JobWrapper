@@ -59,10 +59,6 @@ function LogIn() {
         }
     }
 
-
-
-
-
     return (
         <div className="clear">
             <div className={styles.wrapper}>

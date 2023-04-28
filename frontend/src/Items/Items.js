@@ -5,13 +5,16 @@ import styles from '../MainPage/Main.module.scss';
 function Items({ name, skills, location, salary, id }) {
     return (
         <div className={styles.item} key={id}>
-            <ul>
-                <li><h4>Позиція: {name}</h4></li>
-                <li>  <h3>Навички: {skills.join(', ')}</h3> </li>
-                <li> <h3> {salary && <>
-                    Заробітня плата: {salary}
-                </>}</h3></li>
-            </ul>
+            <h3 className={styles.item__name}>Позиція: {name}</h3>
+            <p className={styles.item__desc}>
+                <span className={styles.item__skills}>
+                    <span className={styles.item__skills-title}>Навички:</span>{skills.join(', ')}
+                </span>
+                <span className={styles.item__salary}>{salary && <>
+                    <span className={styles.item__salary-title}></span>Заробітня плата: {salary}
+                </>}
+                </span>
+            </p>
         </div>
     )
 }

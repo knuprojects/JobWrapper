@@ -1,0 +1,29 @@
+.item{
+    border: 1px solid #000000;
+    border-radius: 0.625rem;
+
+    &__name{
+        font-size: 20px;
+        font-weight: bolder;
+        text-align: left;
+    }
+
+    &__desc{
+        font-size: 16px;
+        font-weight: lighter;
+
+        .item__skills{
+            &-title{
+                font-size: 18px;
+                font-weight: bolder;
+            }
+        }
+
+        .item__salary{
+            &-title{
+                font-size: 18px;
+                font-weight: bolder;
+            }
+        }
+    }
+}

@@ -163,7 +163,6 @@ function Main() {
                             );
                         })}
                     </Map>
-
                 </main>
 
             </div>

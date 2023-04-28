@@ -2,7 +2,6 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom'
 import Login from './LogIn/Login'
 import Registration from './Registration/Registration';
-import {ToastContainer, toast } from "react-toastify";
 import Main from './MainPage/Main';
 function App() {
   return (

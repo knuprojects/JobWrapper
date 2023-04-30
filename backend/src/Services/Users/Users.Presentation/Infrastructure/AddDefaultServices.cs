@@ -12,7 +12,8 @@ public static class AddDefaultServices
         services.AddCore();
         services.AddPersistence();
         services.AddControllers();
-
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
         return services;
     }
 
@@ -21,6 +22,8 @@ public static class AddDefaultServices
         app.UseShared();
 
         app.MapControllers();
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.Run();
     }

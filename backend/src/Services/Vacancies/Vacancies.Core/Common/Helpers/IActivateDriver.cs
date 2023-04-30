@@ -12,7 +12,7 @@ public class ActivateDriver : IActivateDriver
 {
     public ValueTask<IWebDriver> ActivateScrapingDriver()
     {
-        var pathWebDriver = Directory.GetParent(Directory.GetCurrentDirectory()) + "\\Vacancies.Core\\Utils";
+        var pathWebDriver = Directory.GetParent(Directory.GetCurrentDirectory()) + "\\Vacancies.Core\\Common\\Utils";
 
         var options = new ChromeOptions();
 

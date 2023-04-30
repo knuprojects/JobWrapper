@@ -1,7 +1,6 @@
 ﻿using Shared.Abstractions.Time;
 using Shared.Security.Generators;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime;
 using System.Security.Claims;
 
 namespace Shared.Security.Providers;
@@ -39,10 +38,10 @@ public class JwtProvider : IJwtProvider
                new Claim(JwtRegisteredClaimNames.Iat, now.ToTimestamp().ToString())
             };
 
-        if(!string.IsNullOrWhiteSpace(email))
+        if (!string.IsNullOrWhiteSpace(email))
             jwtClaims.Add(new Claim(ClaimTypes.Email, email));
 
-        if(!string.IsNullOrWhiteSpace(role))
+        if (!string.IsNullOrWhiteSpace(role))
             jwtClaims.Add(new Claim(ClaimTypes.Role, role));
 
         var expires = now.AddMinutes(_options.ExpiryMinutes);
@@ -50,7 +49,7 @@ public class JwtProvider : IJwtProvider
         var jwt = _tokenGenerator.GenerateToken(
             _options.SecretKey,
             _options.Issuer,
-            _options.ValidAudience,
+            _options.Audience,
             expires,
             jwtClaims);
 

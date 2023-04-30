@@ -41,7 +41,7 @@ public static class Extensions
                 {
                     IssuerSigningKey = issuerSigningKey,
                     ValidIssuer = jwtOptions.Issuer,
-                    ValidAudience = jwtOptions.ValidAudience,
+                    ValidAudience = jwtOptions.Audience,
                     ValidateIssuer = true,
                     ValidateAudience = true
                 };

@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../MainPage/Main.module.scss';
 
 
-function Items({ name, skills, location, salary, id }) {
+function Items({ name, skills, salary, id }) {
     return (
         <div className={styles.item} key={id}>
             <h3 className={styles.itemName}>Позиція: {name}</h3>

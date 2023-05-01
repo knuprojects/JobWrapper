@@ -55,10 +55,8 @@ function Main() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                if (!Array.isArray(data)) {
-                    throw new Error('Response data is not an array');
-                }
-                setItems(data);
+                setItems(data.items);
+                setTotalItems(data.totalItems);
                 console.log(data);
                 setIsLoading(false);
             } catch (error) {
@@ -107,7 +105,6 @@ function Main() {
                                             id={item.gid}
                                             name={item.name}
                                             skills={item.skills}
-                                            location={item.location}
                                             salary={item.salary}
                                         />
                                     ))}
@@ -134,7 +131,7 @@ function Main() {
                     >
                         <NavigationControl position="top-right" />
                         {items.map((item, index) => {
-                            const [lat, lng] = item.location.split('&');
+                            const [lat, lng] = item.location.split('%');
                             return (
                                 <Marker
                                     key={index}

@@ -4,7 +4,6 @@ import styles from './Main.module.scss';
 
 const Filters = ({ showFilters,pageNumber, pageSize }) => {
     const url = 'http://localhost:5020/api';
-    const accessToken = 'test'
     const [minSalary, setMinSalary] = useState();
     const [maxSalary, setMaxSalary] = useState();
     const [skills, setSkills] = useState([]);
@@ -23,21 +22,35 @@ const Filters = ({ showFilters,pageNumber, pageSize }) => {
 
     function sendFilter() {
         const salary = [minSalary, maxSalary].join('-');
-        const urlWithParams = `${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${[minSalary, maxSalary].join('-')}`;
-        fetch(urlWithParams, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error(error));
 
+        if(salary === '-'){
+            let urlWithParams = `${url}/vacancies/filters?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}`
+
+            fetch(urlWithParams, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error(error));
+        }
+        else{
+            const urlWithParams = `${url}/vacancies/filters?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${salary}`;
+            fetch(urlWithParams, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error(error));
+        }
     }
-
-
 
     return (
         <div className={styles.modal}>

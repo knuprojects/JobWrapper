@@ -30,8 +30,12 @@ public class VacanciesController : ControllerBase
     [HttpGet("filters")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async ValueTask<IActionResult> GetVacanciesByFilters([FromQuery] GetVacanciesByFiltersQuery query, CancellationToken token)
+    public async ValueTask<IActionResult> GetVacanciesByFilters([FromQuery] GetVacanciesByFilters request, CancellationToken token)
     {
+        var filter = new PaginationFilter(request.PageNumber, request.PageSize);
+
+        var query = new GetVacanciesByFiltersQuery(filter, request.Skills, request.Salary);
+
         var vacancies = await _mediator.Send(query, token);
 
         return vacancies is null ? NoContent() : Ok(vacancies);

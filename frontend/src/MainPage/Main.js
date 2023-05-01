@@ -136,7 +136,7 @@ function Main() {
                     >
                         <NavigationControl position="top-right" />
                         {items.map((item, index) => {
-                            const [lat, lng] = item.location.split('%');
+                            const [lat, lng] = item.location.split('%2C');
                             return (
                                 <Marker
                                     key={index}

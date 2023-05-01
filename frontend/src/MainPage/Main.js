@@ -13,9 +13,18 @@ function Main() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [error, setError] = useState(null);
-
+    const pageSize = 10;
+    const [pageNumber, setPageNumber] = useState(1);
+    const url = 'http://localhost:5020/api';
+    function showFilters() {
+        console.log(filters)
+        setFilters(!filters);
+    }
+    const onChangeSearchInput = (event) => {
+        setSearchValue(event.target.value);
+    }
     function paginate(pageNumber) {
-        setPageNumber(pageNumber);
+        setPageNumber(pageNumber++);
         setIsLoading(true);
         fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
             headers: {
@@ -24,14 +33,18 @@ function Main() {
             },
         })
             .then((response) => {
+                console.log(response);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then((data) => {
-                setItems(data);
-                setTotalItems(data.length); // assuming data.length is the total number of items
+                if (!Array.isArray(data.items)) {
+                    throw new Error('Response data does not have an items array');
+                }
+                setItems(data.items);
+                setTotalItems(data.totalItems);
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -40,7 +53,6 @@ function Main() {
             });
     };
 
-    const url = 'http://localhost:5020/api';
     useEffect(() => {
         async function getVacancies() {
             setIsLoading(true);
@@ -65,30 +77,23 @@ function Main() {
             }
         }
         getVacancies();
-    }, []);
-
-    function showFilters() {
-        setFilters(!filters);
-    }
-    const onChangeSearchInput = (event) => {
-        setSearchValue(event.target.value);
-    }
-
-    const [pageSize, setPageSize] = useState(10);
-    const [pageNumber, setPageNumber] = useState(1);
-    const lastItemsIndex = pageNumber * pageSize;
-    const firstItemsIndex = lastItemsIndex - pageSize;
-    const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
+      }, [pageNumber]);
+    
+      const lastItemsIndex = pageNumber * pageSize;
+      const firstItemsIndex = lastItemsIndex - pageSize;
+      const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
     return (
         <div className="clear">
             <div className={styles.wrapper}>
-                {filters &&
+                {filters && (
                     <div className={styles.filters}>
-                        <Filters pageNumber = {pageNumber}
-                        pageSize  = {pageSize}
-                         showFilters={showFilters} />
+                        <Filters
+                            pageNumber={pageNumber}
+                            pageSize={pageSize}
+                            showFilters={showFilters}
+                        />
                     </div>
-                }
+                )}
 
                 <div className={styles.main}>
                     <div className={styles.content}>
@@ -98,7 +103,7 @@ function Main() {
                         </nav>
                         <aside className={styles.aside}>
                             <div>
-                                {currentItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
+                                {currentItems.length > 0 && currentItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
                                     .map((item, index) => (
                                         <Items
                                             key={index}

@@ -152,3 +152,63 @@ export const data = [
 ];
 
 export default data;
+    // function paginate(pageNumber) {
+    //     setPageNumber(pageNumber);
+    //     setIsLoading(true);
+    //     fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //         },
+    //     })
+    //         .then((response) => {
+    //             console.log(response);
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((data) => {
+    //             if (!Array.isArray(data.items)) {
+    //                 throw new Error('Response data does not have an items array');
+    //             }
+    //             setItems(data.items);
+    //             setTotalItems(data.totalItems);
+    //             setIsLoading(false);
+    //         })
+    //         .catch((error) => {
+    //             setError(error.message);
+    //             setIsLoading(false);
+    //         });
+    // };
+
+
+
+    
+    // function fetchVacancies(pageNumber) {
+    //     setIsLoading(true);
+    //     fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+    //         },
+    //     })
+    //         .then((response) => {
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then((data) => {
+    //             if (!Array.isArray(data.items)) {
+    //                 throw new Error('Response data does not have an items array');
+    //             }
+    //             setItems(data.items);
+    //             setTotalItems(data.totalItems);
+    //             setIsLoading(false);
+    //         })
+    //         .catch((error) => {
+    //             setError(error.message);
+    //             setIsLoading(false);
+    //         });
+    // };

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from './Main.module.scss';
 
 
-const Filters = ({ showFilters,pageNumber, pageSize }) => {
+const Filters = ({ showFilters, pageNumber, pageSize }) => {
     const url = 'http://localhost:5020/api';
     const [minSalary, setMinSalary] = useState();
     const [maxSalary, setMaxSalary] = useState();
@@ -16,7 +16,10 @@ const Filters = ({ showFilters,pageNumber, pageSize }) => {
     }
 
     function skillsInput(event) {
-        setSkills(prevSkills => [...prevSkills, document.getElementById('skillInput').value]);
+        setSkills((prevSkills) => [
+            ...prevSkills,
+            document.getElementById('skillInput').value,
+        ]);
         console.log(skills);
     }
 

@@ -24,7 +24,7 @@ function Main() {
         setSearchValue(event.target.value);
     }
     function paginate(pageNumber) {
-        setPageNumber(pageNumber);
+        setPageNumber(pageNumber++);
         setIsLoading(true);
         fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
             headers: {
@@ -54,36 +54,36 @@ function Main() {
     };
 
     useEffect(() => {
+        setIsLoading(true);
         async function getVacancies() {
-            setIsLoading(true);
-            try {
-                const response = await fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                if (!Array.isArray(data.items)) {
-                    throw new Error('Response data does not have an items array');
-                }
-                setItems(data.items);
-                setTotalItems(data.totalItems);
-                console.log(items);
-                setIsLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setIsLoading(false);
+          try {
+            const response = await fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+              },
+            });
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
             }
+            const data = await response.json();
+            if (!Array.isArray(data.items)) {
+              throw new Error('Response data does not have an items array');
+            }
+            setItems(data.items);
+            setTotalItems(data.totalItems);
+            setIsLoading(false);
+          } catch (error) {
+            setError(error.message);
+            setIsLoading(false);
+          }
         }
         getVacancies();
-    }, []);
-    const lastItemsIndex = pageNumber * pageSize;
-    const firstItemsIndex = lastItemsIndex - pageSize;
-    const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
+      }, [pageNumber]);
+    
+      const lastItemsIndex = pageNumber * pageSize;
+      const firstItemsIndex = lastItemsIndex - pageSize;
+      const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
     return (
         <div className="clear">
             <div className={styles.wrapper}>

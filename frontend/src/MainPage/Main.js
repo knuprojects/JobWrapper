@@ -13,7 +13,16 @@ function Main() {
     const [isLoading, setIsLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [error, setError] = useState(null);
+    const pageSize = 10;
+    const [pageNumber, setPageNumber] = useState(1);
 
+    function showFilters() {
+        console.log(filters)
+        setFilters(!filters);
+    }
+    const onChangeSearchInput = (event) => {
+        setSearchValue(event.target.value);
+    }
     function paginate(pageNumber) {
         setPageNumber(pageNumber);
         setIsLoading(true);
@@ -24,14 +33,18 @@ function Main() {
             },
         })
             .then((response) => {
+                console.log(response);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then((data) => {
-                setItems(data);
-                setTotalItems(data.length); // assuming data.length is the total number of items
+                if (!Array.isArray(data.items)) {
+                    throw new Error('Response data does not have an items array');
+                }
+                setItems(data.items);
+                setTotalItems(data.totalItems);
                 setIsLoading(false);
             })
             .catch((error) => {
@@ -55,11 +68,12 @@ function Main() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                if (!Array.isArray(data)) {
-                    throw new Error('Response data is not an array');
+                if (!Array.isArray(data.items)) {
+                    throw new Error('Response data does not have an items array');
                 }
-                setItems(data);
-                console.log(data);
+                setItems(data.items);
+                setTotalItems(data.totalItems);
+                console.log(items);
                 setIsLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -68,29 +82,21 @@ function Main() {
         }
         getVacancies();
     }, []);
-
-    function showFilters() {
-        setFilters(!filters);
-    }
-    const onChangeSearchInput = (event) => {
-        setSearchValue(event.target.value);
-    }
-
-    const [pageSize, setPageSize] = useState(10);
-    const [pageNumber, setPageNumber] = useState(1);
     const lastItemsIndex = pageNumber * pageSize;
     const firstItemsIndex = lastItemsIndex - pageSize;
     const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
     return (
         <div className="clear">
             <div className={styles.wrapper}>
-                {filters &&
+                {filters && (
                     <div className={styles.filters}>
-                        <Filters pageNumber = {pageNumber}
-                        pageSize  = {pageSize}
-                         showFilters={showFilters} />
+                        <Filters
+                            pageNumber={pageNumber}
+                            pageSize={pageSize}
+                            showFilters={showFilters}
+                        />
                     </div>
-                }
+                )}
 
                 <div className={styles.main}>
                     <div className={styles.content}>
@@ -100,7 +106,7 @@ function Main() {
                         </nav>
                         <aside className={styles.aside}>
                             <div>
-                                {currentItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
+                                {currentItems.length > 0 && currentItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
                                     .map((item, index) => (
                                         <Items
                                             key={index}

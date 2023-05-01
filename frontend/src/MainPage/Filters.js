@@ -2,12 +2,8 @@ import React, { useState } from 'react'
 import styles from './Main.module.scss';
 
 
-const Filters = ({ showFilters,pageNumber, pageSize }) => {
+const Filters = ({ showFilters, pageNumber, pageSize }) => {
     const url = 'http://localhost:5020/api';
-    const accessToken = 'test'
-    const [minSalary, setMinSalary] = useState();
-    const [maxSalary, setMaxSalary] = useState();
-    const [skills, setSkills] = useState([]);
     function salaryInput(event) {
         const pattern = /[0-9]/;
         const input = String.fromCharCode(event.charCode);
@@ -16,8 +12,11 @@ const Filters = ({ showFilters,pageNumber, pageSize }) => {
         }
     }
 
-    function skillsInput() {
-        setSkills(prevSkills => [...prevSkills, document.getElementById('skillInput').value]);
+    function skillsInput(event) {
+        setSkills((prevSkills) => [
+            ...prevSkills,
+            document.getElementById('skillInput').value,
+        ]);
         console.log(skills);
     }
 
@@ -25,16 +24,16 @@ const Filters = ({ showFilters,pageNumber, pageSize }) => {
         const salary = [minSalary, maxSalary].join('-');
         const urlWithParams = `${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${salary}`;
         fetch(urlWithParams, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
         })
-          .then((response) => response.json())
-          .then((data) => console.log(data))
-          .catch((error) => console.error(error));
-      }
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+    }
 
 
 

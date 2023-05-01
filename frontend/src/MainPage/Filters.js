@@ -16,26 +16,25 @@ const Filters = ({ showFilters,pageNumber, pageSize }) => {
         }
     }
 
-    function skillsInput(event) {
+    function skillsInput() {
         setSkills(prevSkills => [...prevSkills, document.getElementById('skillInput').value]);
         console.log(skills);
     }
 
     function sendFilter() {
         const salary = [minSalary, maxSalary].join('-');
-        const urlWithParams = `${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${[minSalary, maxSalary].join('-')}`;
+        const urlWithParams = `${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${salary}`;
         fetch(urlWithParams, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
-            }
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
         })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error(error));
-
-    }
+          .then((response) => response.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.error(error));
+      }
 
 
 

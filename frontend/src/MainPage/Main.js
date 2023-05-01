@@ -15,7 +15,7 @@ function Main() {
     const [error, setError] = useState(null);
     const pageSize = 10;
     const [pageNumber, setPageNumber] = useState(1);
-
+    const url = 'http://localhost:5020/api';
     function showFilters() {
         console.log(filters)
         setFilters(!filters);
@@ -53,7 +53,6 @@ function Main() {
             });
     };
 
-    const url = 'http://localhost:5020/api';
     useEffect(() => {
         async function getVacancies() {
             setIsLoading(true);

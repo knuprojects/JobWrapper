@@ -1,9 +1,11 @@
 import style from './Registration.module.scss'
-import { json, Link } from 'react-router-dom'
+import { json, Link, useNavigate } from 'react-router-dom'
 import { useState } from "react"
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 function Registration() {
+    const url = 'http://localhost:5010/api';
+    const navigate = useNavigate();
     const prevDef = (e) => {
         e.preventDefault();
         if (checkOut()) {
@@ -11,28 +13,30 @@ function Registration() {
                 userName: userName,
                 email: email,
                 password: password,
-                roleGid: null
+                roleGid: null,
             };
             console.log('Data:', formData);
-            fetch('http://localhost:5010/api/users/sign-up', {
+            fetch(`${url}/users/sign-up`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData),
             })
-                .then(response => {
-                    return response;
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json();
+                    }
                 })
-                .then(data => {
+                .then((data) => {
                     localStorage.setItem('token', data.token);
                     console.log(data);
+                    navigate('/login');
+
                 })
-                .catch(error => console.error(error));
+                .catch((error) => console.error(error));
         }
-
-
-    }
+    };
     function getUserName(event) {
         setUserName(event.target.value);
     }

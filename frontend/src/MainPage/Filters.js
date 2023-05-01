@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import styles from './Main.module.scss';
 
 
-const Filters = ({ showFilters }) => {
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+const Filters = ({ showFilters,pageNumber, pageSize }) => {
+    const url = 'http://localhost:5020/api';
+    const accessToken = 'test'
     const [minSalary, setMinSalary] = useState();
     const [maxSalary, setMaxSalary] = useState();
     const [skills, setSkills] = useState([]);
@@ -23,20 +23,18 @@ const Filters = ({ showFilters }) => {
 
     function sendFilter() {
         const salary = [minSalary, maxSalary].join('-');
-        const url = `{{http://localhost:5020/api}}/vacancies/PageNumber={{{pageNumber}}}&PageSize={{pageSize}}&?Skillls=AspNet&Skills=${skills}&?Salary=${salary}`;
-        const accessToken = '{{accessToken}}';
-        const headers = new Headers({
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
-        });
-        fetch(url, {
+        const urlWithParams = `${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}&Skills=${skills.join(',')}&Salary=${[minSalary, maxSalary].join('-')}`;
+        fetch(urlWithParams, {
             method: 'GET',
-            headers: headers
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            }
         })
             .then(response => response.json())
             .then(data => console.log(data))
             .catch(error => console.error(error));
-        showFilters();
+
     }
 
 

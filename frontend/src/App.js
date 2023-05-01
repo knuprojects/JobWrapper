@@ -2,8 +2,6 @@ import { Route, Routes } from 'react-router-dom'
 import Login from './LogIn/Login'
 import Registration from './Registration/Registration';
 import Main from './MainPage/Main';
-import PrivateRoute from './authContext';
-
 function App() {
   const isAuthenticated = localStorage.getItem('token') !== null;
 
@@ -11,9 +9,10 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/registration" exact element={<Registration />} />
-        {isAuthenticated && <Route path='/main' exact element = {<PrivateRoute component = {Main} />} />}
-        {!isAuthenticated  && <Route path="/main" element={<Login />} />} 
+        <Route path="/registration" element={<Registration />} />
+        <Route path = "/login" element = {<Login />} />
+        {isAuthenticated && <Route path='/main' element = {<Main/>}/>}
+        {!isAuthenticated && <Route path="/login" element={<Login />} />}
       </Routes>
     </div>
   );

@@ -5,52 +5,18 @@ import Filters from './Filters';
 import Map, { NavigationControl, Marker } from 'react-map-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import Pagination from './Pagination';
 function Main() {
     const [items, setItems] = useState([]);
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
     const [filters, setFilters] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [error, setError] = useState(null);
-    const url = 'http://localhost:5020/api';
-    useEffect(() => {
-        async function getVacancies() {
-            setIsLoading(true);
-            try {
-                const response = await fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setItems(data);
-                setTotalItems(data.length); // assuming data.length is the total number of items
-                setIsLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setIsLoading(false);
-            }
-        }
-        getVacancies();
-    }, [pageNumber, pageSize]);
 
-    function showFilters() {
-        setFilters(!filters);
-    }
-    const onChangeSearchInput = (event) => {
-        setSearchValue(event.target.value);
-    }
-
-    function handlePageClick(pageNumber) {
+    function paginate(pageNumber) {
         setPageNumber(pageNumber);
         setIsLoading(true);
-
         fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -72,19 +38,57 @@ function Main() {
                 setError(error.message);
                 setIsLoading(false);
             });
+    };
+
+    const url = 'http://localhost:5020/api';
+    useEffect(() => {
+        async function getVacancies() {
+            setIsLoading(true);
+            try {
+                const response = await fetch(`${url}/vacancies?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                if (!Array.isArray(data)) {
+                    throw new Error('Response data is not an array');
+                }
+                setItems(data);
+                console.log(data);
+                setIsLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setIsLoading(false);
+            }
+        }
+        getVacancies();
+    }, []);
+
+    function showFilters() {
+        setFilters(!filters);
+    }
+    const onChangeSearchInput = (event) => {
+        setSearchValue(event.target.value);
     }
 
-    const pageCount = Math.ceil(totalItems / pageSize);
-    const visibleItemsStartIndex = (pageNumber - 1) * pageSize;
-    const visibleItemsEndIndex = visibleItemsStartIndex + pageSize;
-    const visibleItems = items.slice(visibleItemsStartIndex, visibleItemsEndIndex);
-
+    const [pageSize, setPageSize] = useState(10);
+    const [pageNumber, setPageNumber] = useState(1);
+    const lastItemsIndex = pageNumber * pageSize;
+    const firstItemsIndex = lastItemsIndex - pageSize;
+    const currentItems = items.slice(firstItemsIndex, lastItemsIndex);
     return (
         <div className="clear">
             <div className={styles.wrapper}>
                 {filters &&
                     <div className={styles.filters}>
-                        <Filters showFilters={showFilters} />
+                        <Filters pageNumber = {pageNumber}
+                        pageSize  = {pageSize}
+                         showFilters={showFilters} />
                     </div>
                 }
 
@@ -96,44 +100,26 @@ function Main() {
                         </nav>
                         <aside className={styles.aside}>
                             <div>
-                                {visibleItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
-                                .map((item, index) => (
-                                    <Items
-                                        key={index}
-                                        id={item.gid}
-                                        name={item.name}
-                                        skills={item.skills}
-                                        location={item.location}
-                                        salary={item.salary}
-                                    />
-                                ))}
+                                {currentItems.filter(items => items.name.toLowerCase().includes(searchValue.toLowerCase()))
+                                    .map((item, index) => (
+                                        <Items
+                                            key={index}
+                                            id={item.gid}
+                                            name={item.name}
+                                            skills={item.skills}
+                                            location={item.location}
+                                            salary={item.salary}
+                                        />
+                                    ))}
                             </div>
                         </aside>
-                    </div>
-                    <div className={styles.pagination}>
-                        <button
-                            className={styles.paginationBtn}
-                            disabled={pageNumber === 1}
-                            onClick={() => handlePageClick(pageNumber - 1)}
-                        >
-                            Previous
-                        </button>
-                        {Array.from({ length: pageCount }, (_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => handlePageClick(i + 1)}
-                                className={i + 1 === pageNumber ? styles.active : ''}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                        <button
-                            className={styles.paginationBtn}
-                            disabled={pageNumber === pageCount}
-                            onClick={() => handlePageClick(pageNumber + 1)}
-                        >
-                            Next
-                        </button>
+                        <div className={styles.pagination}>
+                            <Pagination
+                                pageSize={pageSize}
+                                totalItems={items.length}
+                                paginate={paginate}
+                            />
+                        </div>
                     </div>
                 </div>
                 <main className={styles.map}>

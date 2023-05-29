@@ -1,0 +1,15 @@
+@url = http://localhost:5020/api
+@accessToken = test
+@pageNumber=1
+@pageSize=10
+
+###
+GET {{url}}/vacancies?PageNumber={{{pageNumber}}}&PageSize={{pageSize}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+###
+GET {{url}}/vacancies/filters?PageNumber={{pageNumber}}&PageSize={{pageSize}}&Skills=Test&Skills=Test2&Salary=1000-1500
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

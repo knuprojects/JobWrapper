@@ -1,0 +1,44 @@
+{
+  "reverseProxy": {
+    "routes": {
+      "users": {
+        "clusterId": "users",
+        "match": {
+          "path": "users-service/{**catchall}"
+        },
+        "transforms": [
+          {
+            "pathPattern": "{**catchall}"
+          }
+        ]
+      },
+      "vacancies": {
+        "clusterId": "vacancies",
+        "match": {
+          "path": "vacancies-service/{**catchall}"
+        },
+        "transforms": [
+          {
+            "pathPattern": "{**catchall}"
+          }
+        ]
+      }
+    },
+    "clusters": {
+      "users": {
+        "destinations": {
+          "destination": {
+            "address": "https://users-service"
+          }
+        }
+      },
+      "vacancies": {
+        "destinations": {
+          "destination": {
+            "address": "https://vacancies-service"
+          }
+        }
+      }
+    }
+  }
+}
